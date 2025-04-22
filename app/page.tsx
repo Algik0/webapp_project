@@ -1,10 +1,11 @@
+// app/page.tsx
 "use client";
 
 import { useState } from "react";
 import Login from "./components/login";
 import Register from "./components/register";
 
-export default function Taskademia() {
+export default function Home() {
   const [isRegistering, setIsRegistering] = useState(false);
 
   return (
@@ -12,6 +13,7 @@ export default function Taskademia() {
       <h1 className="text-4xl font-bold mb-8">
         Taskademia {isRegistering ? "Registrieren" : "Login"}
       </h1>
+
       {isRegistering ? (
         <Register onSwitch={() => setIsRegistering(false)} />
       ) : (
