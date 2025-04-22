@@ -1,45 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { neon } from "@neondatabase/serverless";
 
 export default function Taskademia() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   async function handleLogin(event: React.FormEvent) {
     event.preventDefault();
     setLoginError("");
+    setSuccessMessage("");
 
     try {
-      const sql = neon(process.env.DATABASE_URL!); // Das "!" stellt sicher, dass TypeScript weiß, dass die Variable existiert
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-      // Verwende ein Template-Literal für den SQL-Befehl
-      const result = await sql`SELECT * FROM "WebApp"."Login" WHERE username = '${username}' AND password = '${password}'`;
+      const data = await response.json();
 
-      if (result.length > 0) {
-        alert("Login successful!");
-        // Handle successful login (z. B. setze eine Benutzersitzung)
+      if (data.success) {
+        setSuccessMessage(data.message);
       } else {
-        setLoginError("Invalid username or password.");
+        setLoginError(data.message);
       }
     } catch (error) {
       console.error("Login error:", error);
       setLoginError("An error occurred. Please try again.");
-    }
-  }
-
-  async function testDatabaseConnection() {
-    try {
-      const sql = neon(process.env.DATABASE_URL!);
-      // Teste eine einfache Abfrage
-      const result = await sql`SELECT 1`;
-      console.log("Datenbankverbindung erfolgreich:", result);
-      alert("Datenbankverbindung erfolgreich!");
-    } catch (error) {
-      console.error("Fehler bei der Datenbankverbindung:", error);
-      alert("Fehler bei der Datenbankverbindung. Siehe Konsole für Details.");
     }
   }
 
@@ -49,7 +41,7 @@ export default function Taskademia() {
 
       <form onSubmit={handleLogin} className="w-full max-w-md space-y-4">
         <input
-          type="username"
+          type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="E-Mail"
@@ -65,6 +57,7 @@ export default function Taskademia() {
           required
         />
         {loginError && <p className="text-red-500">{loginError}</p>}
+        {successMessage && <p className="text-green-500">{successMessage}</p>}
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
@@ -72,14 +65,6 @@ export default function Taskademia() {
           Login
         </button>
       </form>
-
-      {/* Button zum Testen der Datenbankverbindung */}
-      <button
-        onClick={testDatabaseConnection}
-        className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-      >
-        Datenbankverbindung testen
-      </button>
     </div>
   );
 }
