@@ -18,8 +18,19 @@ export default function Taskademia() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100 flex flex-col items-center">
+    <div className="min-h-screen p-8 bg-gray-100 flex flex-col items-center relative">
+      {/* Login/Register Buttons */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        <button className="px-4 py-2 bg-white text-blue-500 border border-blue-500 rounded hover:bg-blue-50">
+          Login
+        </button>
+        <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          Registrieren
+        </button>
+      </div>
+
       <h1 className="text-4xl font-bold mb-8">Taskademia</h1>
+
       <div className="w-full max-w-md">
         <div className="flex gap-2 mb-4">
           <input
@@ -36,6 +47,7 @@ export default function Taskademia() {
             Hinzufügen
           </button>
         </div>
+
         <ul className="space-y-2">
           {tasks.map((task, index) => (
             <li
