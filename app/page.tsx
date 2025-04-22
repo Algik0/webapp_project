@@ -1,120 +1,73 @@
-"use client";
+import React, { useState } from "react";
 
-import { useState } from "react";
+const TicTacToe: React.FC = () => {
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [isXNext, setIsXNext] = useState(true);
 
-export default function Taskademia() {
-  const [tasks, setTasks] = useState<string[]>([]);
-  const [newTask, setNewTask] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<"login" | "register">("login");
+  const handleClick = (index: number) => {
+    if (board[index] || calculateWinner(board)) return;
 
-  const addTask = () => {
-    if (newTask.trim() !== "") {
-      setTasks([...tasks, newTask]);
-      setNewTask("");
+    const newBoard = board.slice();
+    newBoard[index] = isXNext ? "X" : "O";
+    setBoard(newBoard);
+    setIsXNext(!isXNext);
+  };
+
+  const calculateWinner = (squares: string[]) => {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    for (let line of lines) {
+      const [a, b, c] = line;
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a];
+      }
     }
+    return null;
   };
 
-  const removeTask = (index: number) => {
-    setTasks(tasks.filter((_, i) => i !== index));
-  };
+  const winner = calculateWinner(board);
+  const status = winner
+    ? `Winner: ${winner}`
+    : `Next player: ${isXNext ? "X" : "O"}`;
 
-  const openModal = (type: "login" | "register") => {
-    setModalType(type);
-    setShowModal(true);
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setIsXNext(true);
   };
-
-  const closeModal = () => setShowModal(false);
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100 flex flex-col items-center relative">
-      {/* Login/Register Buttons */}
-      <div className="absolute top-4 right-4 flex gap-2">
-        <button
-          onClick={() => openModal("login")}
-          className="px-4 py-2 bg-white text-blue-500 border border-blue-500 rounded hover:bg-blue-50"
-        >
-          Login
-        </button>
-        <button
-          onClick={() => openModal("register")}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Registrieren
-        </button>
-      </div>
-
-      <h1 className="text-4xl font-bold mb-8">Taskademia</h1>
-
-      <div className="w-full max-w-md">
-        <div className="flex gap-2 mb-4">
-          <input
-            type="text"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            placeholder="Neue Aufgabe hinzufügen..."
-            className="flex-1 p-2 border border-gray-300 rounded"
-          />
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>Tic-Tac-Toe</h1>
+      <div style={{ marginBottom: "20px" }}>{status}</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 100px)", gap: "5px", justifyContent: "center" }}>
+        {board.map((value, index) => (
           <button
-            onClick={addTask}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            key={index}
+            onClick={() => handleClick(index)}
+            style={{
+              width: "100px",
+              height: "100px",
+              fontSize: "24px",
+              cursor: "pointer",
+            }}
           >
-            Hinzufügen
+            {value}
           </button>
-        </div>
-
-        <ul className="space-y-2">
-          {tasks.map((task, index) => (
-            <li
-              key={index}
-              className="flex justify-between items-center p-2 bg-white border rounded shadow"
-            >
-              <span>{task}</span>
-              <button
-                onClick={() => removeTask(index)}
-                className="text-red-500 hover:underline"
-              >
-                Entfernen
-              </button>
-            </li>
-          ))}
-        </ul>
+        ))}
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-sm relative">
-            <button
-              onClick={closeModal}
-              className="absolute top-2 right-2 text-gray-500 hover:text-black"
-            >
-              &times;
-            </button>
-            <h2 className="text-xl font-bold mb-4">
-              {modalType === "login" ? "Login" : "Registrieren"}
-            </h2>
-            <form className="space-y-4">
-              <input
-                type="email"
-                placeholder="E-Mail"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <input
-                type="password"
-                placeholder="Passwort"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-              >
-                {modalType === "login" ? "Einloggen" : "Registrieren"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+      <button onClick={resetGame} style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}>
+        Reset Game
+      </button>
     </div>
   );
-}
+};
+
+export default TicTacToe;
