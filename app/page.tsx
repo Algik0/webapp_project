@@ -14,7 +14,7 @@ export default function Taskademia() {
   };
 
   const removeTask = (index: number) => {
-    setTasks(tasks.filter((_, i) => i !== index));
+    setTasks(tasks.filter((_: string, i: number) => i !== index));
   };
 
   return (
@@ -25,7 +25,7 @@ export default function Taskademia() {
           <input
             type="text"
             value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTask(e.target.value)}
             placeholder="Neue Aufgabe hinzufügen..."
             className="flex-1 p-2 border border-gray-300 rounded"
           />
@@ -37,7 +37,7 @@ export default function Taskademia() {
           </button>
         </div>
         <ul className="space-y-2">
-          {tasks.map((task, index) => (
+          {tasks.map((task: string, index: number) => (
             <li
               key={index}
               className="flex justify-between items-center p-2 bg-white border rounded shadow"
