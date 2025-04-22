@@ -13,21 +13,33 @@ export default function Taskademia() {
     setLoginError("");
 
     try {
-      const sql = neon(`${process.env.DATABASE_URL}`);
-      const result = await sql(`SELECT * FROM WebApp.Login WHERE username = $1 AND password = $2`
-        ,
-        [username, password]
-      );
+      const sql = neon(process.env.DATABASE_URL!); // Das "!" stellt sicher, dass TypeScript weiß, dass die Variable existiert
+
+      // Verwende ein Template-Literal für den SQL-Befehl
+      const result = await sql`SELECT * FROM "WebApp"."Login" WHERE username = '${username}' AND password = '${password}'`;
 
       if (result.length > 0) {
         alert("Login successful!");
-        // Handle successful login (e.g., set user session)
+        // Handle successful login (z. B. setze eine Benutzersitzung)
       } else {
         setLoginError("Invalid username or password.");
       }
     } catch (error) {
       console.error("Login error:", error);
       setLoginError("An error occurred. Please try again.");
+    }
+  }
+
+  async function testDatabaseConnection() {
+    try {
+      const sql = neon(process.env.DATABASE_URL!);
+      // Teste eine einfache Abfrage
+      const result = await sql`SELECT 1`;
+      console.log("Datenbankverbindung erfolgreich:", result);
+      alert("Datenbankverbindung erfolgreich!");
+    } catch (error) {
+      console.error("Fehler bei der Datenbankverbindung:", error);
+      alert("Fehler bei der Datenbankverbindung. Siehe Konsole für Details.");
     }
   }
 
@@ -60,6 +72,14 @@ export default function Taskademia() {
           Login
         </button>
       </form>
+
+      {/* Button zum Testen der Datenbankverbindung */}
+      <button
+        onClick={testDatabaseConnection}
+        className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+      >
+        Datenbankverbindung testen
+      </button>
     </div>
   );
 }
