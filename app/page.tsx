@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 
 const TicTacToe: React.FC = () => {
@@ -47,7 +49,14 @@ const TicTacToe: React.FC = () => {
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Tic-Tac-Toe</h1>
       <div style={{ marginBottom: "20px" }}>{status}</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 100px)", gap: "5px", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 100px)",
+          gap: "5px",
+          justifyContent: "center",
+        }}
+      >
         {board.map((value, index) => (
           <button
             key={index}
@@ -63,7 +72,10 @@ const TicTacToe: React.FC = () => {
           </button>
         ))}
       </div>
-      <button onClick={resetGame} style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}>
+      <button
+        onClick={resetGame}
+        style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}
+      >
         Reset Game
       </button>
     </div>
