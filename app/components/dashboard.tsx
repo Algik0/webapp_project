@@ -1,4 +1,4 @@
-// app/dashboard/mainpage.tsx
+// app/dashboard/dashboard.tsx
 "use client";
 
 const DashboardPage = () => {

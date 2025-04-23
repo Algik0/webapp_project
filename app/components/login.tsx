@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 
 interface LoginProps {
   onSwitch: () => void;
+  onLoginSuccess: () => void; // Neue Prop
 }
 
-export default function Login({ onSwitch }: LoginProps) {
+export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -29,8 +30,7 @@ export default function Login({ onSwitch }: LoginProps) {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // bei Erfolg auf /dashboard weiterleiten
-        router.push("/dashboard");
+        onLoginSuccess(); // Aufruf der neuen Prop
       } else {
         setLoginError(data.message || "Login fehlgeschlagen");
       }
