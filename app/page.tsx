@@ -6,6 +6,7 @@ import Image from "next/image";
 import Login from "./components/login";
 import Register from "./components/register";
 import Dashboard from "./components/dashboard";
+import Welcome from "./components/welcomepage";
 import taskademiaLogo from "./images/taskademia.png";
 
 export default function Home() {
@@ -31,7 +32,7 @@ if (isLoggedIn) {
       {isRegistering ? (
         <Register onSwitch={() => setIsRegistering(false)} />
       ) : (
-        <Login 
+          <Login 
         onSwitch={() => setIsRegistering(true)} // Callback für den Wechsel zur Registrierung
         onLoginSuccess={() => setIsLoggedIn(true)} // Callback für den erfolgreichen Login
         />
