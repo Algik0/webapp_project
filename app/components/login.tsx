@@ -1,37 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function Login({ onSwitch }: { onSwitch: () => void }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+interface LoginProps {
+  onSwitch: () => void;
+  onLoginSuccess: () => void; // Neue Prop
+}
 
-  async function handleLogin(event: React.FormEvent) {
-    event.preventDefault();
+export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
+  const router = useRouter();
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoginError("");
-    setSuccessMessage("");
+    setLoading(true);
 
     try {
-      const response = await fetch("/api/login", {
+      const res = await fetch("/api/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (data.success) {
-        setSuccessMessage(data.message);
+      if (res.ok && data.success) {
+        onLoginSuccess(); // Aufruf der neuen Prop
+        router.push("../dashboard"); // Weiterleitung zur Dashboard-Seite
       } else {
-        setLoginError(data.message);
+        setLoginError(data.message || "Login fehlgeschlagen");
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      setLoginError("An error occurred. Please try again.");
+    } catch (err) {
+      console.error("Login error:", err);
+      setLoginError("Netzwerkfehler, bitte versuche es erneut.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -42,7 +50,7 @@ export default function Login({ onSwitch }: { onSwitch: () => void }) {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         placeholder="Username"
-        className="w-full p-2 border border-gray-300 rounded"
+        className="w-full p-2 border rounded"
         required
       />
       <input
@@ -50,23 +58,26 @@ export default function Login({ onSwitch }: { onSwitch: () => void }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Passwort"
-        className="w-full p-2 border border-gray-300 rounded"
+        className="w-full p-2 border rounded"
         required
       />
+
       {loginError && <p className="text-red-500">{loginError}</p>}
-      {successMessage && <p className="text-green-500">{successMessage}</p>}
+
       <button
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+        disabled={loading}
       >
-        Login
+        {loading ? "Lädt…" : "Login"}
       </button>
+
       <button
         type="button"
         onClick={onSwitch}
-        className="mt-4 text-blue-500 underline"
+        className="mt-2 text-blue-500 underline"
       >
-        Noch keinen Account? Registrieren
+        Registrieren
       </button>
     </form>
   );
