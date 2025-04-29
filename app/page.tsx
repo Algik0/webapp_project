@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Login from "./components/login";
 import Register from "./components/register";
@@ -45,40 +46,13 @@ export default function Home() {
           <div className="fact-box">🎯 Personalisiere Taskademia zu deinem perfekten Alltagsplaner</div>
         </div>
 
-      {isLoginModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-button" onClick={() => setIsLoginModalOpen(false)}>
-              ✖
-            </button>
-            <Login
-              onSwitch={() => {
-                setIsLoginModalOpen(false);
-                setIsRegisterModalOpen(true);
-              }}
-              onLoginSuccess={() => {
-                setIsLoginModalOpen(false);
-                alert("Login erfolgreich!");
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {isRegisterModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-button" onClick={() => setIsRegisterModalOpen(false)}>
-              ✖
-            </button>
-            <Register
-              onSwitch={() => {
-                setIsRegisterModalOpen(false);
-                setIsLoginModalOpen(true);
-              }}
-            />
-          </div>
-        </div>
+      {isRegistering ? (
+        <Register onSwitch={() => setIsRegistering(false)} />
+      ) : (
+        <Login 
+        onSwitch={() => setIsRegistering(true)} // Callback für den Wechsel zur Registrierung
+        onLoginSuccess={() => setIsLoggedIn(true)} // Callback für den erfolgreichen Login
+        />
       )}
     </div>
   );

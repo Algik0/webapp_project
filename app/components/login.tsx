@@ -1,19 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 
 interface LoginProps {
   onSwitch: () => void;
-  onLoginSuccess: () => void; // Neue Prop
+  onLoginSuccess: () => void;
 }
 
 export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
-  const router = useRouter();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loginError, setLoginError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,11 +31,11 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
         onLoginSuccess(); // Aufruf der neuen Prop
         router.push("../dashboard"); // Weiterleitung zur Dashboard-Seite
       } else {
-        setLoginError(data.message || "Login fehlgeschlagen");
+        setLoginError(data?.message || "Login fehlgeschlagen");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setLoginError("Netzwerkfehler, bitte versuche es erneut.");
+      setLoginError("Netzwerkfehler. Bitte versuche es erneut.");
     } finally {
       setLoading(false);
     }
