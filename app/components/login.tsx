@@ -31,6 +31,7 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
 
       if (res.ok && data.success) {
         onLoginSuccess(); // Aufruf der neuen Prop
+        router.push("../dashboard"); // Weiterleitung zur Dashboard-Seite
       } else {
         setLoginError(data.message || "Login fehlgeschlagen");
       }
@@ -76,7 +77,7 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
         onClick={onSwitch}
         className="mt-2 text-blue-500 underline"
       >
-        Noch keinen Account? Registrieren
+        Registrieren
       </button>
     </form>
   );
