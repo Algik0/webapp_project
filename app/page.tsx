@@ -46,7 +46,7 @@ export default function Home() {
           <div className="fact-box">🎯 Personalisiere Taskademia zu deinem perfekten Alltagsplaner</div>
         </div>
 
-      {isRegistering ? (
+      {setIsRegistering ? (
         <Register onSwitch={() => setIsRegistering(false)} />
       ) : (
         <Login 
