@@ -58,7 +58,6 @@ export default function Home() {
               }}
               onLoginSuccess={() => {
                 setIsLoginModalOpen(false);
-                alert("Login erfolgreich!");
               }}
             />
           </div>
