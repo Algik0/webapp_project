@@ -46,15 +46,6 @@ export default function Home() {
           <div className="fact-box">🎯 Personalisiere Taskademia zu deinem perfekten Alltagsplaner</div>
         </div>
 
-<<<<<<< HEAD
-      {setIsRegistering ? (
-        <Register onSwitch={() => setIsRegistering(false)} />
-      ) : (
-        <Login 
-        onSwitch={() => setIsRegistering(true)} // Callback für den Wechsel zur Registrierung
-        onLoginSuccess={() => setIsLoggedIn(true)} // Callback für den erfolgreichen Login
-        />
-=======
       {isLoginModalOpen && (
         <div className="modal">
           <div className="modal-content">
@@ -88,7 +79,6 @@ export default function Home() {
             />
           </div>
         </div>
->>>>>>> dev
       )}
     </div>
   );
