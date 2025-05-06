@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: "Invalid credentials" });
     }
 
-    const { password: storedPassword, salt } = result[0];
+    const { Password: storedPassword, Salt: salt } = result[0];
 
     // Hash das eingegebene Passwort mit dem Salt
     const hashedPassword = crypto.createHash("sha256").update(password + salt).digest("hex");
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     if (hashedPassword === storedPassword) {
       return NextResponse.json({ success: true, message: "Login successful" });
     } else {
+      console.log("SQL Result:", result);
       return NextResponse.json({ success: false, message: "Invalid credentials" });
     }
   } catch (error) {
