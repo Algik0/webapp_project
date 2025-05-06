@@ -1,10 +1,19 @@
-// app/dashboard/dashboard.tsx
 "use client";
 
+<<<<<<< HEAD
+import { useRouter } from "next/navigation";
+import BottomTabBar from "../components/BottomTabBar";
+import {
+  CalendarDays,
+  Star,
+  BookOpen,
+} from "lucide-react";
+=======
 import "../styles/dashboard.css";
 import BottomTabBar from "./bottomtabbar";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Star, BookOpen } from "lucide-react";
+>>>>>>> dev
 
 export default function Dashboard() {
   const router = useRouter();
@@ -19,6 +28,18 @@ export default function Dashboard() {
       </div>
 
       <div className="flex flex-col gap-4 w-full max-w-md">
+<<<<<<< HEAD
+        <button
+          onClick={() => router.push("/meinTag")}
+          className="flex items-center gap-3 p-4 bg-white rounded-lg shadow hover:bg-blue-100 transition"
+        >
+          <CalendarDays className="w-6 h-6 text-blue-600" />
+          <span className="text-lg font-medium text-gray-800">Mein Tag</span>
+        </button>
+
+        <button
+          onClick={() => router.push("/wichtig")}
+=======
       <button
         onClick={() => router.push("/dashboard/myday")}
         className="flex items-center gap-3 p-4 bg-white rounded-lg shadow hover:bg-blue-100 transition"
@@ -30,6 +51,7 @@ export default function Dashboard() {
 
         <button
           onClick={() => router.push("/dashboard/important")}
+>>>>>>> dev
           className="flex items-center gap-3 p-4 bg-white rounded-lg shadow hover:bg-blue-100 transition"
         >
           <Star className="w-6 h-6 text-yellow-500" />
@@ -37,7 +59,11 @@ export default function Dashboard() {
         </button>
 
         <button
+<<<<<<< HEAD
+          onClick={() => router.push("/kategorisierung")}
+=======
           onClick={() => router.push("/dashboard/category")}
+>>>>>>> dev
           className="flex items-center gap-3 p-4 bg-white rounded-lg shadow hover:bg-blue-100 transition"
         >
           <BookOpen className="w-6 h-6 text-green-600" />
