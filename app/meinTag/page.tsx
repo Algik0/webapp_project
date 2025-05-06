@@ -2,46 +2,81 @@
 
 import { useState } from "react";
 import BackButton from "../components/backButton";
+import { Star, Trash2 } from "lucide-react";
+import type { Task } from "../types";
 
 export default function MeinTagPage() {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: "Mathe Übungsblatt abgeben", done: false },
-    { id: 2, text: "Projektmeeting um 14:00", done: false },
-    { id: 3, text: "Einkaufen", done: false },
+  const [tasks, setTasks] = useState<Task[]>([
+    {
+      taskID: 1,
+      categoryID: 1, // Beispiel
+      name: "Mathe Übungsblatt abgeben",
+      date: "2025-05-06",
+      checked: false,
+      important: false,
+    },
+    {
+      taskID: 2,
+      categoryID: 1,
+      name: "Projektmeeting um 14:00",
+      date: "2025-05-06",
+      checked: false,
+      important: true,
+    },
   ]);
 
-  const toggleTask = (id: number) => {
+  const toggleChecked = (id: number) => {
     setTasks(tasks.map(task =>
-      task.id === id ? { ...task, done: !task.done } : task
+      task.taskID === id ? { ...task, checked: !task.checked } : task
     ));
   };
 
+  const toggleImportant = (task: Task) => {
+    setTasks(tasks.map(t =>
+      t.taskID === task.taskID ? { ...t, important: !t.important } : t
+    ));
+  };
+
+  const deleteTask = (id: number) => {
+    setTasks(tasks.filter(task => task.taskID !== id));
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-8 relative">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="flex items-center justify-between mb-6">
         <BackButton />
+        <h1 className="text-3xl font-bold text-center flex-1 -ml-6">📅 Mein Tag</h1>
+        <div className="w-6" />
       </div>
-      <div className="flex flex-col items-center">
-        <div className="w-full max-w-2xl">
-          <h1 className="text-3xl font-bold mb-6">Mein Tag</h1>
-          <div className="bg-white shadow-md rounded-lg p-6 space-y-4">
-            {tasks.map(task => (
-              <div key={task.id} className="flex items-center justify-between">
-                <label className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={task.done}
-                    onChange={() => toggleTask(task.id)}
-                    className="h-5 w-5 text-blue-500 rounded focus:ring-0 border-gray-300"
-                  />
-                  <span className={`text-lg ${task.done ? "line-through text-gray-400" : ""}`}>
-                    {task.text}
-                  </span>
-                </label>
-              </div>
-            ))}
+
+      <div className="bg-white shadow-md rounded-lg p-6 space-y-4">
+        {tasks.map(task => (
+          <div key={task.taskID} className="flex justify-between items-center">
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={task.checked}
+                onChange={() => toggleChecked(task.taskID)}
+                className="h-5 w-5"
+              />
+              <span className={`text-lg ${task.checked ? "line-through text-gray-400" : ""}`}>
+                {task.name}
+              </span>
+            </label>
+            <div className="flex gap-3 items-center">
+              <button onClick={() => toggleImportant(task)}>
+                {task.important ? (
+                  <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                ) : (
+                  <Star className="w-5 h-5 text-yellow-500" />
+                )}
+              </button>
+              <button onClick={() => deleteTask(task.taskID)}>
+                <Trash2 className="w-5 h-5 text-gray-600 hover:text-red-600" />
+              </button>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
