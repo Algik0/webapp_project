@@ -10,7 +10,7 @@ interface LoginProps {
 
 export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
   const router = useRouter();
-  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loginError, setLoginError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,7 +24,7 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: email, password }),
       });
 
       const data = await res.json();
@@ -47,9 +47,9 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
     <form onSubmit={handleLogin} className="w-full max-w-md space-y-4">
       <input
         type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
         className="w-full p-2 border rounded"
         required
       />

@@ -3,7 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
-  const { username, password } = await request.json();
+  const { email: email, password } = await request.json();
   const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const sql = neon(databaseUrl);
 
     // Hole den Benutzer und das Salt aus der Datenbank
-    const result = await sql`SELECT password, salt FROM "WebApp"."Login" WHERE username = ${username}`;
+    const result = await sql`SELECT "Password", "Salt" FROM "WebApp"."User" WHERE "Email" = ${email}`;
 
     if (result.length === 0) {
       return NextResponse.json({ success: false, message: "Invalid credentials" });
