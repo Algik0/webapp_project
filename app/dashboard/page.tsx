@@ -51,3 +51,8 @@ export default function Dashboard() {
           <BookOpen className="dashboard-icon text-green-600" />
           <span className="dashboard-button-text">Kategorisierung</span>
         </button>
+      </div>
+      <BottomTabBar />
+    </div>
+  );
+}
