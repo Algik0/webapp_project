@@ -1,14 +1,5 @@
 "use client";
 
-<<<<<<< HEAD
-import { useRouter } from "next/navigation";
-import BottomTabBar from "../components/BottomTabBar";
-import {
-  CalendarDays,
-  Star,
-  BookOpen,
-} from "lucide-react";
-=======
 import "../styles/dashboard.css";
 import BottomTabBar from "./bottomtabbar";
 import { useRouter } from "next/navigation";
@@ -54,17 +45,9 @@ export default function Dashboard() {
         </button>
 
         <button
-<<<<<<< HEAD
-          onClick={() => router.push("/kategorisierung")}
-=======
           onClick={() => router.push("/dashboard/category")}
-          className="dashboard-button"
+          className="flex items-center gap-3 p-4 bg-white rounded-lg shadow hover:bg-blue-100 transition"
         >
           <BookOpen className="dashboard-icon text-green-600" />
           <span className="dashboard-button-text">Kategorisierung</span>
         </button>
-      </div>
-      <BottomTabBar />
-    </div>
-  );
-}
