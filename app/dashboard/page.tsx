@@ -4,10 +4,10 @@ import "../styles/dashboard.css";
 import BottomTabBar from "./bottomtabbar";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Star, BookOpen } from "lucide-react";
-import { useEffect } from "react";
 
 export default function Dashboard() {
   const router = useRouter();
+
   const handleLogout = () => {
     // Optional: Hier könntest du Cookies löschen, falls nötig
     router.push("/"); // Navigiert zur WelcomePage
@@ -16,7 +16,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       <button className="dashboard-logout-btn" onClick={handleLogout}>
-        Abmelden
+        Sign Out
       </button>
       <div className="dashboard-header">
         <h1 className="dashboard-title">Willkommen bei Taskademia</h1>
