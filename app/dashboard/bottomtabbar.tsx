@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Calendar } from "lucide-react";
+import "../styles/bottomtabbar.css";
 
 export default function BottomTabBar() {
   const pathname = usePathname();
@@ -13,7 +14,7 @@ export default function BottomTabBar() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-around py-3 z-50">
+    <nav className="bottom-tabbar-nav">
       {tabs.map((tab) => {
         const isActive = pathname === tab.href;
         const Icon = tab.icon;
@@ -22,12 +23,10 @@ export default function BottomTabBar() {
           <button
             key={tab.name}
             onClick={() => router.push(tab.href)}
-            className={`flex flex-col items-center text-sm ${
-              isActive ? "text-blue-600" : "text-gray-500"
-            }`}
+            className={`bottom-tabbar-btn${isActive ? " bottom-tabbar-btn-active" : ""}`}
           >
-            <Icon className="w-6 h-6 mb-1" />
-            {tab.name}
+            <Icon className="bottom-tabbar-icon" />
+            <span className="bottom-tabbar-label">{tab.name}</span>
           </button>
         );
       })}

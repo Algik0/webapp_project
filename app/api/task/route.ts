@@ -1,0 +1,89 @@
+import { NextRequest, NextResponse } from "next/server";
+import { neon } from "@neondatabase/serverless";
+
+export async function GET(req: NextRequest) {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    return NextResponse.json(
+      { success: false, message: "DATABASE_URL is not set" },
+      { status: 500 }
+    );
+  }
+  const sql = neon(databaseUrl);
+  // Hole die UserID aus den Cookies
+  const cookies = req.headers.get("cookie");
+  const userId = cookies?.match(/userId=(\d+)/)?.[1];
+  if (!userId) {
+    return NextResponse.json(
+      { success: false, message: "UserID is required" },
+      { status: 400 }
+    );
+  }
+  const { searchParams } = new URL(req.url);
+  const important = searchParams.get("important");
+  const myday = searchParams.get("myday");
+  let tasks;
+  try {
+    if (important === "true") {
+      tasks = await sql`
+        SELECT * FROM "WebApp"."Task"
+        WHERE "UserID" = ${userId} AND "Important" = true
+      `;
+    } else if (myday === "true") {
+      tasks = await sql`
+        SELECT * FROM "WebApp"."Task"
+        WHERE "UserID" = ${userId} AND "Date" = CURRENT_DATE
+      `;
+    } else {
+      tasks = await sql`
+        SELECT * FROM "WebApp"."Task"
+        WHERE "UserID" = ${userId}
+      `;
+    }
+    return NextResponse.json({ success: true, tasks });
+  } catch (err) {
+    return NextResponse.json({ success: false, message: "Fehler beim Laden der Tasks" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    return NextResponse.json(
+      { success: false, message: "DATABASE_URL is not set" },
+      { status: 500 }
+    );
+  }
+  const sql = neon(databaseUrl);
+  // Hole die UserID aus den Cookies
+  const cookies = req.headers.get("cookie");
+  const userId = cookies?.match(/userId=(\d+)/)?.[1];
+  if (!userId) {
+    return NextResponse.json(
+      { success: false, message: "UserID is required" },
+      { status: 400 }
+    );
+  }
+  const { taskId, checked } = await req.json();
+  if (!taskId) {
+    return NextResponse.json({ success: false, message: "TaskID fehlt" }, { status: 400 });
+  }
+  try {
+    if (typeof checked === "boolean") {
+      await sql`
+        UPDATE "WebApp"."Task"
+        SET "Checked" = ${checked}
+        WHERE "TaskID" = ${taskId} AND "UserID" = ${userId}
+      `;
+    } else {
+      await sql`
+        UPDATE "WebApp"."Task"
+        SET "Checked" = true
+        WHERE "TaskID" = ${taskId} AND "UserID" = ${userId}
+      `;
+    }
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    return NextResponse.json({ success: false, message: "Fehler beim Aktualisieren des Tasks" }, { status: 500 });
+  }
+}

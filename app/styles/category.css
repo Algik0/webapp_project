@@ -1,3 +1,8 @@
+/*
+ * category.css
+ * Styles for the category management page
+ */
+
 .category-container {
   min-height: 100vh;
   padding-bottom: 5rem;
@@ -26,7 +31,7 @@
   gap: 0.5rem;
 }
 
-.category-item {
+.category-list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -38,24 +43,21 @@
   color: #333;
 }
 
-.category-item:hover {
+.category-list-item:hover {
   background-color: #f3f4f6;
 }
 
-.category-name {
+.category-list-name {
   font-size: 1rem;
   font-weight: 500;
 }
 
-.category-delete-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: #9ca3af;
-  transition: color 0.2s;
-}
-
-.category-delete-icon:hover {
-  color: #ef4444;
+.category-list-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #de3163;
+  padding: 0.2rem;
 }
 
 .category-add-button {
@@ -80,7 +82,10 @@
   background: linear-gradient(to bottom left, #000000, #de3163);
 }
 
-.category-add-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+.category-loading,
+.category-error {
+  text-align: center;
+  margin-top: 2rem;
+  color: #fff;
+  font-size: 1.1rem;
 }

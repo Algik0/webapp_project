@@ -8,9 +8,16 @@ import { useEffect } from "react";
 
 export default function Dashboard() {
   const router = useRouter();
+  const handleLogout = () => {
+    // Optional: Hier könntest du Cookies löschen, falls nötig
+    router.push("/"); // Navigiert zur WelcomePage
+  };
 
   return (
     <div className="dashboard-container">
+      <button className="dashboard-logout-btn" onClick={handleLogout}>
+        Abmelden
+      </button>
       <div className="dashboard-header">
         <h1 className="dashboard-title">Willkommen bei Taskademia</h1>
         <p className="dashboard-subtitle">Wähle eine Kategorie aus.</p>
