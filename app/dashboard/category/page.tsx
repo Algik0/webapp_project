@@ -39,8 +39,24 @@ export default function KategorisierungPage() {
     fetchCategories();
   }, []);
 
-  const deleteCategory = (id: number) => {
-    setCategories((prev) => prev.filter((c) => c.id !== id));
+  const deleteCategory = async (id: number) => {
+    try {
+      const response = await fetch(`/api/category?categoryId=${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Entferne die Kategorie aus dem lokalen Zustand
+        setCategories((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        alert(data.message || "Fehler beim Löschen der Kategorie");
+      }
+    } catch (err) {
+      console.error("Fehler beim Löschen der Kategorie:", err);
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+    }
   };
 
   const handleAddCategory = async () => {

@@ -9,17 +9,6 @@ import { useEffect } from "react";
 export default function Dashboard() {
   const router = useRouter();
 
-  useEffect(() => {
-    const userId = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("userId="))
-      ?.split("=")[1];
-
-    if (!userId) {
-      router.push("/"); // Weiterleitung zur Login-Seite
-    }
-  }, []);
-
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
