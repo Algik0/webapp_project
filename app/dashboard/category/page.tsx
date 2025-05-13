@@ -20,10 +20,12 @@ export default function KategorisierungPage() {
 
         if (data.success) {
           setCategories(
-            data.categories.map((cat: { CategoryID: number; Name: string }) => ({
-              id: cat.CategoryID,
-              name: cat.Name,
-            }))
+            data.categories.map(
+              (cat: { CategoryID: number; Name: string }) => ({
+                id: cat.CategoryID,
+                name: cat.Name,
+              })
+            )
           );
         } else {
           setError(data.message || "Fehler beim Laden der Kategorien");
@@ -89,11 +91,19 @@ export default function KategorisierungPage() {
   };
 
   if (loading) {
-    return <p className="category-loading">Lade Kategorien...</p>;
+    return (
+      <div className="category-container">
+        <p className="category-loading">Lade Kategorien...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="category-error">{error}</p>;
+    return (
+      <div className="category-container">
+        <p className="category-error">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -105,9 +115,9 @@ export default function KategorisierungPage() {
 
       <div className="category-list">
         {categories.map((cat) => (
-          <div key={cat.id} className="category-item">
-            <span className="category-name">{cat.name}</span>
-            <button onClick={() => deleteCategory(cat.id)}>
+          <div key={cat.id} className="category-list-item">
+            <span className="category-list-name">{cat.name}</span>
+            <button className="category-list-delete" onClick={() => deleteCategory(cat.id)}>
               <Trash2 className="category-delete-icon" />
             </button>
           </div>
@@ -115,8 +125,7 @@ export default function KategorisierungPage() {
       </div>
 
       <button onClick={handleAddCategory} className="category-add-button">
-        <Plus className="category-add-icon" />
-        Hinzufügen
+        <Plus className="category-add-icon" /> Hinzufügen
       </button>
     </div>
   );

@@ -17,21 +17,31 @@ export async function POST(request: Request) {
     const sql = neon(databaseUrl);
 
     // Überprüfe, ob der Benutzer bereits existiert
-    const existingEmail = await sql`SELECT * FROM "WebApp"."User" WHERE "Email" = ${email}`;
+    const existingEmail =
+      await sql`SELECT * FROM "WebApp"."User" WHERE "Email" = ${email}`;
     if (existingEmail.length > 0) {
-      return NextResponse.json({ success: false, message: "User already exists" });
+      return NextResponse.json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
     // Generiere ein Salt
     const salt = crypto.randomBytes(16).toString("hex");
 
     // Hash das Passwort mit dem Salt
-    const hashedPassword = crypto.createHash("sha256").update(password + salt).digest("hex");
+    const hashedPassword = crypto
+      .createHash("sha256")
+      .update(password + salt)
+      .digest("hex");
 
     // Füge den neuen Benutzer in die Datenbank ein
     await sql`INSERT INTO "WebApp"."User" ("Email", "Password", "Salt") VALUES (${email}, ${hashedPassword}, ${salt})`;
 
-    return NextResponse.json({ success: true, message: "Registration successful" });
+    return NextResponse.json({
+      success: true,
+      message: "Registration successful",
+    });
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(

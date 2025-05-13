@@ -1,0 +1,46 @@
+/*
+ * bottomtabbar.css
+ * Styles for the BottomTabBar navigation
+ */
+
+.bottom-tabbar-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  justify-content: space-around;
+  padding: 0.75rem 0;
+  z-index: 50;
+}
+
+.bottom-tabbar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.bottom-tabbar-btn-active {
+  color: #de3163;
+  font-weight: 600;
+}
+
+.bottom-tabbar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.bottom-tabbar-label {
+  font-size: 0.95rem;
+}

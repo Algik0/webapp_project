@@ -24,22 +24,38 @@ export async function POST(request: Request) {
     `;
 
     if (result.length === 0) {
-      return NextResponse.json({ success: false, message: "Invalid credentials" });
+      return NextResponse.json({
+        success: false,
+        message: "Invalid credentials",
+      });
     }
 
     const { UserID, Password: storedPassword, Salt: salt } = result[0];
 
     // Hash das eingegebene Passwort mit dem Salt
-    const hashedPassword = crypto.createHash("sha256").update(password + salt).digest("hex");
+    const hashedPassword = crypto
+      .createHash("sha256")
+      .update(password + salt)
+      .digest("hex");
 
     // Vergleiche das gehashte Passwort mit dem gespeicherten Passwort
     if (hashedPassword === storedPassword) {
       // Speichere die UserID in einem Cookie
-      const response = NextResponse.json({ success: true, message: "Login successful" });
-      response.cookies.set("userId", UserID, { httpOnly: true, secure: true, path: "/" });
+      const response = NextResponse.json({
+        success: true,
+        message: "Login successful",
+      });
+      response.cookies.set("userId", UserID, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+      });
       return response;
     } else {
-      return NextResponse.json({ success: false, message: "Invalid credentials" });
+      return NextResponse.json({
+        success: false,
+        message: "Invalid credentials",
+      });
     }
   } catch (error) {
     console.error("Database error:", error);

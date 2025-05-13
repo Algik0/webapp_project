@@ -1,32 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../styles/important.css";
+import BackButton from "../backbutton";
+
+interface Task {
+  TaskID: number;
+  Name: string;
+  Checked: boolean;
+  Important: boolean;
+}
 
 export default function WichtigPage() {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: "Abgabe der Hausarbeit", done: false },
-    { id: 2, text: "Vorbereitung auf Präsentation", done: false },
-    { id: 3, text: "Bewerbung abschicken", done: false },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const toggleTask = (id: number) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, done: !task.done } : task
-    ));
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const response = await fetch("/api/task?important=true");
+        const data = await response.json();
+        if (data.success) {
+          setTasks(data.tasks);
+        } else {
+          setError(data.message || "Fehler beim Laden der Tasks");
+        }
+      } catch (err) {
+        setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTasks();
+  }, []);
+
+  const handleToggleChecked = async (taskId: number, checked: boolean) => {
+    try {
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.TaskID === taskId ? { ...task, Checked: !checked } : task
+        )
+      );
+      const response = await fetch("/api/task", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId, checked: !checked }),
+      });
+      const data = await response.json();
+      if (!data.success) {
+        alert(data.message || "Fehler beim Aktualisieren des Tasks");
+        // Optional: Task wieder zurücksetzen
+      }
+    } catch (err) {
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+      // Optional: Task wieder zurücksetzen
+    }
   };
+
+  if (loading) return <div className="important-container">Lade...</div>;
+  if (error) return <div className="important-container">{error}</div>;
 
   return (
     <div className="important-container">
-      <h1 className="important-title">Wichtig</h1>
+      <div className="important-header">
+        <BackButton />
+        <h1 className="important-title">Wichtig</h1>
+      </div>
       <ul className="important-task-list">
-        {tasks.map(task => (
+        {tasks.map((task) => (
           <li
-            key={task.id}
-            className={`important-task-item ${task.done ? "important-task-done" : ""}`}
-            onClick={() => toggleTask(task.id)}
+            key={task.TaskID}
+            className={`important-task-list-item${task.Checked ? " important-task-list-done" : ""}`}
+            onClick={() => handleToggleChecked(task.TaskID, task.Checked)}
+            style={{ cursor: "pointer", fontWeight: task.Important ? "bold" : "normal" }}
           >
-            {task.text}
+            {task.Name}
           </li>
         ))}
       </ul>
