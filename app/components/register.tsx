@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function Register({ onSwitch }: { onSwitch: () => void }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [registerError, setRegisterError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -13,13 +13,19 @@ export default function Register({ onSwitch }: { onSwitch: () => void }) {
     setRegisterError("");
     setSuccessMessage("");
 
+   // Überprüfe, ob die E-Mail ein "@" enthält
+   if (!email.includes("@")) {
+    setRegisterError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+    return;
+  }
+
     try {
       const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: email, password }),
       });
 
       const data = await response.json();
@@ -39,9 +45,9 @@ export default function Register({ onSwitch }: { onSwitch: () => void }) {
     <form onSubmit={handleRegister} className="w-full max-w-md space-y-4">
       <input
         type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
         className="w-full p-2 border border-gray-300 rounded"
         required
       />

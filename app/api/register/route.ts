@@ -3,7 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
-  const { username, password } = await request.json();
+  const { email: email, password } = await request.json();
   const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
@@ -17,8 +17,8 @@ export async function POST(request: Request) {
     const sql = neon(databaseUrl);
 
     // Überprüfe, ob der Benutzer bereits existiert
-    const existingUser = await sql`SELECT * FROM "WebApp"."Login" WHERE username = ${username}`;
-    if (existingUser.length > 0) {
+    const existingEmail = await sql`SELECT * FROM "WebApp"."User" WHERE "Email" = ${email}`;
+    if (existingEmail.length > 0) {
       return NextResponse.json({ success: false, message: "User already exists" });
     }
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const hashedPassword = crypto.createHash("sha256").update(password + salt).digest("hex");
 
     // Füge den neuen Benutzer in die Datenbank ein
-    await sql`INSERT INTO "WebApp"."Login" (username, password, salt) VALUES (${username}, ${hashedPassword}, ${salt})`;
+    await sql`INSERT INTO "WebApp"."User" ("Email", "Password", "Salt") VALUES (${email}, ${hashedPassword}, ${salt})`;
 
     return NextResponse.json({ success: true, message: "Registration successful" });
   } catch (error) {
