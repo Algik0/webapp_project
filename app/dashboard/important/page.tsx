@@ -11,19 +11,23 @@ export default function WichtigPage() {
   ]);
 
   const toggleTask = (id: number) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, done: !task.done } : task
-    ));
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, done: !task.done } : task
+      )
+    );
   };
 
   return (
     <div className="important-container">
       <h1 className="important-title">Wichtig</h1>
       <ul className="important-task-list">
-        {tasks.map(task => (
+        {tasks.map((task) => (
           <li
             key={task.id}
-            className={`important-task-item ${task.done ? "important-task-done" : ""}`}
+            className={`important-task-item ${
+              task.done ? "important-task-done" : ""
+            }`}
             onClick={() => toggleTask(task.id)}
           >
             {task.text}

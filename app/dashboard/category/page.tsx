@@ -20,10 +20,12 @@ export default function KategorisierungPage() {
 
         if (data.success) {
           setCategories(
-            data.categories.map((cat: { CategoryID: number; Name: string }) => ({
-              id: cat.CategoryID,
-              name: cat.Name,
-            }))
+            data.categories.map(
+              (cat: { CategoryID: number; Name: string }) => ({
+                id: cat.CategoryID,
+                name: cat.Name,
+              })
+            )
           );
         } else {
           setError(data.message || "Fehler beim Laden der Kategorien");

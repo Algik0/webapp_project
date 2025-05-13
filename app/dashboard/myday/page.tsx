@@ -11,16 +11,18 @@ export default function MeinTagPage() {
   ]);
 
   const toggleTask = (id: number) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, done: !task.done } : task
-    ));
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, done: !task.done } : task
+      )
+    );
   };
 
   return (
     <div className="myday-container">
       <h1 className="myday-title">Mein Tag</h1>
       <ul className="myday-task-list">
-        {tasks.map(task => (
+        {tasks.map((task) => (
           <li
             key={task.id}
             className={`myday-task-item ${task.done ? "myday-task-done" : ""}`}

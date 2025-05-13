@@ -82,7 +82,10 @@ export async function POST(request: Request) {
       VALUES (${userId}, ${name.trim()})
     `;
 
-    return NextResponse.json({ success: true, message: "Category added successfully" });
+    return NextResponse.json({
+      success: true,
+      message: "Category added successfully",
+    });
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(
@@ -133,7 +136,10 @@ export async function DELETE(request: Request) {
       WHERE "CategoryID" = ${categoryId} AND "UserID" = ${userId}
     `;
 
-    return NextResponse.json({ success: true, message: "Category deleted successfully" });
+    return NextResponse.json({
+      success: true,
+      message: "Category deleted successfully",
+    });
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(
