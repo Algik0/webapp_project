@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Calendar } from "lucide-react";
 import "../styles/bottomtabbar.css";
 
-export default function BottomTabBar() {
+export default function BottomTabBar({ onCalendarClick }: { onCalendarClick?: () => void } = {}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -18,11 +18,16 @@ export default function BottomTabBar() {
       {tabs.map((tab) => {
         const isActive = pathname === tab.href;
         const Icon = tab.icon;
-
         return (
           <button
             key={tab.name}
-            onClick={() => router.push(tab.href)}
+            onClick={() => {
+              if (tab.name === "Kalender" && onCalendarClick) {
+                onCalendarClick();
+              } else {
+                router.push(tab.href);
+              }
+            }}
             className={`bottom-tabbar-btn${isActive ? " bottom-tabbar-btn-active" : ""}`}
           >
             <Icon className="bottom-tabbar-icon" />

@@ -77,7 +77,7 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
         onClick={onSwitch}
         className="mt-2 text-blue-500 underline"
       >
-        Registrieren
+        Sign Up
       </button>
     </form>
   );

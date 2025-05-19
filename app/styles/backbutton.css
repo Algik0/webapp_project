@@ -1,0 +1,26 @@
+/* Styles für den runden BackButton */
+.back-button {
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  padding: 0;
+}
+
+.back-button:hover {
+  background: #fde68a;
+  box-shadow: 0 4px 16px rgba(222,49,99,0.12);
+}
+
+.back-icon {
+  width: 22px;
+  height: 22px;
+  color: #de3163;
+}
