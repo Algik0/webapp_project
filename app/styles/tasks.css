@@ -1,4 +1,6 @@
-.category-container {
+/* Gemeinsame Styles für Task-Listen (MyDay, Important) */
+
+.task-container {
   min-height: 100vh;
   padding-bottom: 5rem;
   background: linear-gradient(to bottom left, #de3163, #000000);
@@ -7,29 +9,32 @@
   overflow: hidden;
 }
 
-.category-header {
+.task-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
 }
 
-.category-title {
+.task-title {
   font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   color: #ffffff;
 }
 
-.category-list {
+.task-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   overflow-y: auto;
   max-height: calc(100vh - 12rem); /* Platz für Header und Add-Button */
 }
 
-.category-list-item {
+.task-list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -42,16 +47,16 @@
   cursor: default;
 }
 
-.category-list-item:hover {
+.task-list-item:hover {
   background-color: #fde68a;
 }
 
-.category-list-name {
-  font-size: 1rem;
-  font-weight: 500;
+.task-list-done {
+  text-decoration: line-through;
+  color: #9ca3af;
 }
 
-.category-list-delete {
+.task-delete {
   background: none;
   border: none;
   cursor: pointer;
@@ -59,7 +64,17 @@
   padding: 0.2rem;
 }
 
-.category-add-button {
+.task-delete-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.task-list-name {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.task-add-button {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -81,19 +96,19 @@
   z-index: 100;
 }
 
-.category-add-button:hover {
+.task-add-button:hover {
   background-color: #fde68a;
 }
 
-.category-loading,
-.category-error {
+.task-loading,
+.task-error {
   text-align: center;
   margin-top: 2rem;
   color: #fff;
   font-size: 1.1rem;
 }
 
-.category-loading-centered {
+.task-loading-centered {
   display: flex;
   justify-content: center;
   align-items: center;
