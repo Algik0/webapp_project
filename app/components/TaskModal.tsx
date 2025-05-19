@@ -9,7 +9,13 @@ interface TaskModalProps {
   hideDateField?: boolean;
 }
 
-export default function TaskModal({ open, onClose, onSubmit, title, hideDateField }: TaskModalProps) {
+export default function TaskModal({
+  open,
+  onClose,
+  onSubmit,
+  title,
+  hideDateField,
+}: TaskModalProps) {
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [error, setError] = useState("");
@@ -42,7 +48,7 @@ export default function TaskModal({ open, onClose, onSubmit, title, hideDateFiel
             className="modal-input"
             type="text"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Taskname"
             autoFocus
           />
@@ -53,13 +59,17 @@ export default function TaskModal({ open, onClose, onSubmit, title, hideDateFiel
                 className="modal-input"
                 type="date"
                 value={date}
-                onChange={e => setDate(e.target.value)}
+                onChange={(e) => setDate(e.target.value)}
               />
             </>
           )}
           {error && <div className="modal-error">{error}</div>}
-          <button className="modal-submit" type="submit">Hinzufügen</button>
-          <button className="modal-cancel" type="button" onClick={onClose}>Abbrechen</button>
+          <button className="modal-submit" type="submit">
+            Hinzufügen
+          </button>
+          <button className="modal-cancel" type="button" onClick={onClose}>
+            Abbrechen
+          </button>
         </form>
       </div>
     </div>

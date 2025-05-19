@@ -14,13 +14,14 @@ export default function CategoryDetailPage() {
 
   useEffect(() => {
     fetch(`/api/task?categoryId=${categoryId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.success) throw new Error(data.message || "Fehler beim Laden der Tasks");
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success)
+          throw new Error(data.message || "Fehler beim Laden der Tasks");
         setTasks(data.tasks);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
@@ -36,8 +37,9 @@ export default function CategoryDetailPage() {
         body: JSON.stringify({ name: newTask.trim(), categoryId }),
       });
       const data = await res.json();
-      if (!data.success) throw new Error(data.message || "Fehler beim Hinzufügen des Tasks");
-      setTasks(prev => [...prev, data.task]);
+      if (!data.success)
+        throw new Error(data.message || "Fehler beim Hinzufügen des Tasks");
+      setTasks((prev) => [...prev, data.task]);
       setNewTask("");
     } catch (err: any) {
       setError(err.message);
@@ -58,18 +60,23 @@ export default function CategoryDetailPage() {
       ) : (
         <>
           <div className="category-task-list">
-            {tasks.map(task => (
+            {tasks.map((task) => (
               <div key={task.TaskID} className="category-task-item">
                 <span>{task.Name}</span>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+          <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
             <input
               value={newTask}
-              onChange={e => setNewTask(e.target.value)}
+              onChange={(e) => setNewTask(e.target.value)}
               placeholder="Neuen Task hinzufügen..."
-              style={{ flex: 1, padding: 8, borderRadius: 4, border: '1px solid #ccc' }}
+              style={{
+                flex: 1,
+                padding: 8,
+                borderRadius: 4,
+                border: "1px solid #ccc",
+              }}
             />
             <button onClick={handleAddTask} className="category-add-button">
               <Plus className="category-add-icon" />

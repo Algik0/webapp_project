@@ -48,7 +48,10 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json({ success: true, tasks });
   } catch (err) {
-    return NextResponse.json({ success: false, message: "Fehler beim Laden der Tasks" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Fehler beim Laden der Tasks" },
+      { status: 500 }
+    );
   }
 }
 
@@ -72,7 +75,10 @@ export async function PATCH(req: NextRequest) {
   }
   const { taskId, checked, important } = await req.json();
   if (!taskId) {
-    return NextResponse.json({ success: false, message: "TaskID fehlt" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: "TaskID fehlt" },
+      { status: 400 }
+    );
   }
   try {
     if (typeof checked === "boolean") {
@@ -91,7 +97,10 @@ export async function PATCH(req: NextRequest) {
     }
     return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ success: false, message: "Fehler beim Aktualisieren des Tasks" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Fehler beim Aktualisieren des Tasks" },
+      { status: 500 }
+    );
   }
 }
 
@@ -115,7 +124,10 @@ export async function POST(req: NextRequest) {
   }
   const { name, important, date, categoryId } = await req.json();
   if (!name || !date) {
-    return NextResponse.json({ success: false, message: "Name und Datum sind erforderlich" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: "Name und Datum sind erforderlich" },
+      { status: 400 }
+    );
   }
   try {
     let task;
@@ -136,7 +148,10 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ success: true, task: task[0] });
   } catch (err) {
-    return NextResponse.json({ success: false, message: "Fehler beim Hinzufügen des Tasks" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Fehler beim Hinzufügen des Tasks" },
+      { status: 500 }
+    );
   }
 }
 
@@ -161,7 +176,10 @@ export async function DELETE(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const taskId = searchParams.get("taskId");
   if (!taskId) {
-    return NextResponse.json({ success: false, message: "TaskID fehlt" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: "TaskID fehlt" },
+      { status: 400 }
+    );
   }
   try {
     await sql`
@@ -170,6 +188,9 @@ export async function DELETE(req: NextRequest) {
     `;
     return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ success: false, message: "Fehler beim Löschen des Tasks" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Fehler beim Löschen des Tasks" },
+      { status: 500 }
+    );
   }
 }
