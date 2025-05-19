@@ -4,10 +4,13 @@ import "../styles/dashboard.css";
 import BottomTabBar from "./bottomtabbar";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Star, BookOpen } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Calendar from "../components/Calendar";
+import { useCachedFetch } from "../components/useCachedFetch";
 
 export default function Dashboard() {
   const router = useRouter();
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleLogout = () => {
     document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname + ";";
@@ -16,6 +19,40 @@ export default function Dashboard() {
     document.cookie = "userId=; Max-Age=0; path=/;";
     window.location.href = "/";
   };
+
+  // Kalender-Tasks laden
+  const { data: tasks, loading, error } = useCachedFetch<any[]>(
+    "calendar_tasks",
+    async () => {
+      const res = await fetch("/api/task");
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || "Fehler beim Laden der Tasks");
+      return data.tasks;
+    },
+    { refreshOnFocus: true }
+  );
+  const tasksByDate: Record<string, any[]> = {};
+  (tasks || []).forEach((task) => {
+    if (task.Date) {
+      const date = task.Date.slice(0, 10);
+      if (!tasksByDate[date]) tasksByDate[date] = [];
+      tasksByDate[date].push(task);
+    }
+  });
+
+  // Kalender-Overlay-Logik
+  useEffect(() => {
+    // Overlay nur anzeigen, wenn explizit showCalendar true ist
+    if (!showCalendar) return;
+    // Wenn Overlay offen ist und User navigiert, Overlay schließen
+    const closeOnRoute = () => {
+      if (window.location.pathname !== "/dashboard") {
+        setShowCalendar(false);
+      }
+    };
+    window.addEventListener("popstate", closeOnRoute);
+    return () => window.removeEventListener("popstate", closeOnRoute);
+  }, []); // <- zurück auf leeres Dependency-Array
 
   return (
     <div className="dashboard-container">
@@ -53,8 +90,23 @@ export default function Dashboard() {
         </button>
       </div>
       <div className="dashboard-bottom">
-        <BottomTabBar />
+        <BottomTabBar onCalendarClick={() => setShowCalendar(true)} />
       </div>
+      {showCalendar && (
+        <div className="calendar-modal-overlay">
+          <div className="calendar-modal-window">
+            <button className="calendar-modal-close" onClick={() => setShowCalendar(false)}>×</button>
+            <h1>📅 Kalender</h1>
+            {loading ? (
+              <div>Kalender wird geladen...</div>
+            ) : error ? (
+              <div style={{ color: "red" }}>{error}</div>
+            ) : (
+              <Calendar tasksByDate={tasksByDate} />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
