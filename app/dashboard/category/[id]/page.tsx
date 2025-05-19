@@ -2,15 +2,15 @@
 import { useEffect, useState } from "react";
 import { Trash2, Plus } from "lucide-react";
 import BackButton from "../../../components/backButton";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
-export default function CategoryDetailPage({ params }: { params: { id: string } }) {
+export default function CategoryDetailPage() {
+  const params = useParams();
+  const categoryId = params.id as string;
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [newTask, setNewTask] = useState("");
-  const router = useRouter();
-  const categoryId = params.id;
 
   useEffect(() => {
     fetch(`/api/task?categoryId=${categoryId}`)
