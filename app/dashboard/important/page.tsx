@@ -66,7 +66,7 @@ export default function WichtigPage() {
     setModalOpen(true);
   };
 
-  const handleModalSubmit = async (name: string, date: string) => {
+  const handleModalSubmit = async (name: string, date?: string) => {
     try {
       const response = await fetch("/api/task", {
         method: "POST",
