@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 type WeatherData = {
   location: {
@@ -39,7 +39,7 @@ const weatherQuotes: Record<string, string[]> = {
     "Deine Zukunft ist so hell wie der Himmel heute",
     "Ein klarer Himmel – ein klarer Plan.",
     "Mit Sonnenkraft durchstarten – auch beim Lernen.",
-    "Wenn die Sonne scheint, scheint auch dein Potenzial."
+    "Wenn die Sonne scheint, scheint auch dein Potenzial.",
   ],
   regen: [
     "Nicht vergessen: Enten lieben dieses Wetter!",
@@ -64,7 +64,7 @@ const weatherQuotes: Record<string, string[]> = {
     "Nutze Regentage, um deine Ziele zu gießen.",
     "Wenn draußen alles grau ist, machs dir im Kopf bunt",
     "Tropfen für Tropfen wächst dein Wissen.",
-    "Es regnet? Zeit, innerlich zu leuchten!"
+    "Es regnet? Zeit, innerlich zu leuchten!",
   ],
   schnee: [
     "Schnee? Zeit für Kakao und Wollsocken!",
@@ -89,7 +89,7 @@ const weatherQuotes: Record<string, string[]> = {
     "Lernen ist wie Schneefall – leise, aber wirkungsvoll.",
     "Der Schnee hält dich nicht auf – er spornt dich an",
     "Winter ist kein Grund zu ruhn – sondern zu reifen.",
-    "Die Kälte draußen stärkt den Fokus drinnen."
+    "Die Kälte draußen stärkt den Fokus drinnen.",
   ],
   bewölkt: [
     "Die Sonne macht heute Homeoffice.",
@@ -114,9 +114,10 @@ const weatherQuotes: Record<string, string[]> = {
     "Wolken schieben – Motivation ziehen.",
     "Du brauchst keinen Sonnenschein, um zu glänzen.",
     "Auch an grauen Tagen ist Lernen Gold wert.",
-    "Mach aus Grau ein Meisterwerk."
+    "Mach aus Grau ein Meisterwerk.",
   ],
-  nebel: [ "Wenn du dein Haus findest, hast du gewonnen.",
+  nebel: [
+    "Wenn du dein Haus findest, hast du gewonnen.",
     "Mysteriöses Wetter für Detektive und Geisterjäger!",
     "Heute brauchst du eher ein Radar als eine Sonnenbrille.",
     "Nebel draußen, Klarheit drinnen.",
@@ -138,7 +139,8 @@ const weatherQuotes: Record<string, string[]> = {
     "Dein Wille bringt dich durch jeden Nebel.",
     "Vertrau deinem Kompass – deinem Ziel entgegen",
     "Im Nebel suchen – heißt Neues finden.",
-    "Du siehst es noch nicht, aber du kommst an."],
+    "Du siehst es noch nicht, aber du kommst an.",
+  ],
   windig: [
     "Heute wird dir selbst die Frisur davonfliegen.",
     "Flieg nicht weg! (Oder tu's!)",
@@ -162,17 +164,20 @@ const weatherQuotes: Record<string, string[]> = {
     "Wind macht wach – nutz ihn.",
     "Lass den Wind dein Feuer schüren.",
     "Heute bringt der Wind neue Möglichkeiten.",
-    "Mit Rückenwind und Willen ist alles möglich."
-  ]
+    "Mit Rückenwind und Willen ist alles möglich.",
+  ],
 };
 
 function getFunnyQuote(conditionText: string): string {
   const text = conditionText.toLowerCase();
 
-  if (text.includes("sonnig") || text.includes("klar")) return randomQuote("sonnig");
-  if (text.includes("regen") || text.includes("nass")) return randomQuote("regen");
+  if (text.includes("sonnig") || text.includes("klar"))
+    return randomQuote("sonnig");
+  if (text.includes("regen") || text.includes("nass"))
+    return randomQuote("regen");
   if (text.includes("schnee")) return randomQuote("schnee");
-  if (text.includes("wolke") || text.includes("bewölkt")) return randomQuote("bewölkt");
+  if (text.includes("wolke") || text.includes("bewölkt"))
+    return randomQuote("bewölkt");
   if (text.includes("nebel")) return randomQuote("nebel");
   if (text.includes("wind")) return randomQuote("windig");
 
@@ -186,11 +191,11 @@ function randomQuote(category: string): string {
 
 export default function Weather() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [quote, setQuote] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [quote, setQuote] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
-  const apiKey = '9c5b3c9d317e4680871143322250405';
-  const city = 'Mannheim';
+  const apiKey = "9c5b3c9d317e4680871143322250405";
+  const city = "Mannheim";
   const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&lang=de`;
 
   useEffect(() => {
@@ -209,19 +214,44 @@ export default function Weather() {
   }, [apiUrl]);
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', margin: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <div
+      style={{
+        fontFamily: "Arial, sans-serif",
+        margin: "2rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <h1>Aktuelles Wetter</h1>
       {error ? (
         <p>{error}</p>
       ) : weather ? (
-        <div id="weather" style={{ marginTop: '1rem', lineHeight: '1.6', textAlign: 'center' }}>
-          <p><strong></strong> {weather.location.name}, {weather.location.country}</p>
-          <p><strong></strong> {weather.location.localtime}</p>
-          <p><strong></strong> {weather.current.temp_c}°C</p>
+        <div
+          id="weather"
+          style={{ marginTop: "1rem", lineHeight: "1.6", textAlign: "center" }}
+        >
           <p>
-            <img src={`https:${weather.current.condition.icon}`} alt={weather.current.condition.text} />
+            <strong></strong> {weather.location.name},{" "}
+            {weather.location.country}
           </p>
-          <div id="quote" style={{ marginTop: '1.5rem', fontStyle: 'italic', color: '#fff' }}>
+          <p>
+            <strong></strong> {weather.location.localtime}
+          </p>
+          <p>
+            <strong></strong> {weather.current.temp_c}°C
+          </p>
+          <p>
+            <img
+              src={`https:${weather.current.condition.icon}`}
+              alt={weather.current.condition.text}
+            />
+          </p>
+          <div
+            id="quote"
+            style={{ marginTop: "1.5rem", fontStyle: "italic", color: "#fff" }}
+          >
             💬 {quote}
           </div>
         </div>

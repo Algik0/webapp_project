@@ -1,5 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Star, Trash2 } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+  Star,
+  Trash2,
+} from "lucide-react";
 
 function getMonday(d: Date) {
   const date = new Date(d);
@@ -19,18 +25,31 @@ function getWeekNumber(d: Date) {
 export type CalendarView = "week" | "month";
 
 export interface CalendarProps {
-  tasksByDate: Record<string, { TaskID: number; Name: string; Checked: boolean; Important?: boolean; Date: string }[]>;
+  tasksByDate: Record<
+    string,
+    {
+      TaskID: number;
+      Name: string;
+      Checked: boolean;
+      Important?: boolean;
+      Date: string;
+    }[]
+  >;
 }
 
 export default function Calendar({ tasksByDate }: CalendarProps) {
   const [view, setView] = useState<CalendarView>("week");
   const [current, setCurrent] = useState(new Date());
-  const [localTaskState, setLocalTaskState] = useState<Record<number, { Checked: boolean; Important?: boolean; deleted?: boolean }>>({});
+  const [localTaskState, setLocalTaskState] = useState<
+    Record<number, { Checked: boolean; Important?: boolean; deleted?: boolean }>
+  >({});
   const [error, setError] = useState<string | null>(null);
 
   // Scroll-Handling für Task-Icons
   const taskRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const [scrollingTasks, setScrollingTasks] = useState<Record<number, boolean>>({});
+  const [scrollingTasks, setScrollingTasks] = useState<Record<number, boolean>>(
+    {}
+  );
 
   useEffect(() => {
     Object.entries(taskRefs.current).forEach(([taskId, el]) => {
@@ -71,7 +90,9 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
     }
   };
   const handleToggleImportant = async (task: any) => {
-    const newImportant = !(localTaskState[task.TaskID]?.Important ?? task.Important);
+    const newImportant = !(
+      localTaskState[task.TaskID]?.Important ?? task.Important
+    );
     setLocalTaskState((prev) => ({
       ...prev,
       [task.TaskID]: {
@@ -87,7 +108,9 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
         body: JSON.stringify({ taskId: task.TaskID, important: newImportant }),
       });
     } catch {
-      setError("Aktion fehlgeschlagen (Wichtig). Bitte später erneut versuchen.");
+      setError(
+        "Aktion fehlgeschlagen (Wichtig). Bitte später erneut versuchen."
+      );
       setTimeout(() => setError(null), 3000);
     }
   };
@@ -104,7 +127,9 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
         method: "DELETE",
       });
     } catch {
-      setError("Aktion fehlgeschlagen (Löschen). Bitte später erneut versuchen.");
+      setError(
+        "Aktion fehlgeschlagen (Löschen). Bitte später erneut versuchen."
+      );
       setTimeout(() => setError(null), 3000);
     }
   };
@@ -162,20 +187,38 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
   return (
     <div className="calendar-widget">
       {error && (
-        <div style={{ background: '#de3163', color: '#fff', padding: '0.5rem 1rem', borderRadius: '0.5rem', marginBottom: '1rem', textAlign: 'center' }}>
+        <div
+          style={{
+            background: "#de3163",
+            color: "#fff",
+            padding: "0.5rem 1rem",
+            borderRadius: "0.5rem",
+            marginBottom: "1rem",
+            textAlign: "center",
+          }}
+        >
           {error}
         </div>
       )}
       <div className="calendar-header">
-        <button onClick={prev}><ChevronLeft /></button>
+        <button onClick={prev}>
+          <ChevronLeft />
+        </button>
         <span className="calendar-title">
           {view === "week"
             ? `KW ${weekNumber} (${monday.toLocaleDateString()} - ${weekDays[6].toLocaleDateString()})`
-            : `${current.toLocaleString("default", { month: "long" })} ${current.getFullYear()}`}
+            : `${current.toLocaleString("default", {
+                month: "long",
+              })} ${current.getFullYear()}`}
         </span>
-        <button onClick={next}><ChevronRight /></button>
-        <button className="calendar-view-toggle" onClick={() => setView(view === "week" ? "month" : "week")}
-          title={view === "week" ? "Monatsansicht" : "Wochenansicht"}>
+        <button onClick={next}>
+          <ChevronRight />
+        </button>
+        <button
+          className="calendar-view-toggle"
+          onClick={() => setView(view === "week" ? "month" : "week")}
+          title={view === "week" ? "Monatsansicht" : "Wochenansicht"}
+        >
           <CalendarIcon />
         </button>
       </div>
@@ -183,35 +226,93 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
         {view === "week"
           ? weekDays.map((d) => (
               <div key={d.toISOString()} className="calendar-day">
-                <div className="calendar-day-label">{d.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" })}</div>
+                <div className="calendar-day-label">
+                  {d.toLocaleDateString("de-DE", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "2-digit",
+                  })}
+                </div>
                 <div className="calendar-tasks">
                   {(tasksByDate[getDateKey(d)] || []).map((task) => {
-                    const checked = localTaskState[task.TaskID]?.Checked ?? task.Checked;
-                    const important = localTaskState[task.TaskID]?.Important ?? task.Important;
+                    const checked =
+                      localTaskState[task.TaskID]?.Checked ?? task.Checked;
+                    const important =
+                      localTaskState[task.TaskID]?.Important ?? task.Important;
                     const deleted = localTaskState[task.TaskID]?.deleted;
                     if (deleted) return null;
                     return (
                       <div
                         key={task.TaskID}
-                        ref={el => { taskRefs.current[task.TaskID] = el; }}
-                        className={`calendar-task${checked ? " calendar-task-done" : ""}${scrollingTasks[task.TaskID] ? " scrolling" : ""}`}
+                        ref={(el) => {
+                          taskRefs.current[task.TaskID] = el;
+                        }}
+                        className={`calendar-task${
+                          checked ? " calendar-task-done" : ""
+                        }${scrollingTasks[task.TaskID] ? " scrolling" : ""}`}
                         onClick={() => handleToggleChecked(task)}
                         style={{ display: "flex", alignItems: "center" }}
                       >
                         <span style={{ flex: 1 }}>{task.Name}</span>
-                        <span className="calendar-task-actions" style={{ display: "flex", alignItems: "center", gap: 0 }}>
+                        <span
+                          className="calendar-task-actions"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0,
+                          }}
+                        >
                           <button
                             className="calendar-task-star"
-                            style={{ background: "none", border: "none", color: important ? "#de3163" : "#bbb", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
-                            onClick={e => { e.stopPropagation(); handleToggleImportant(task); }}
-                            title={important ? "Wichtig entfernen" : "Als wichtig markieren"}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: important ? "#de3163" : "#bbb",
+                              margin: 0,
+                              cursor: "pointer",
+                              padding: 0,
+                              width: 22,
+                              height: 22,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleImportant(task);
+                            }}
+                            title={
+                              important
+                                ? "Wichtig entfernen"
+                                : "Als wichtig markieren"
+                            }
                           >
-                            <Star fill={important ? "#de3163" : "none"} stroke="#de3163" width={16} height={16} />
+                            <Star
+                              fill={important ? "#de3163" : "none"}
+                              stroke="#de3163"
+                              width={16}
+                              height={16}
+                            />
                           </button>
                           <button
                             className="calendar-task-delete"
-                            style={{ background: "none", border: "none", color: "#de3163", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
-                            onClick={e => { e.stopPropagation(); handleDeleteTask(task); }}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#de3163",
+                              margin: 0,
+                              cursor: "pointer",
+                              padding: 0,
+                              width: 22,
+                              height: 22,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTask(task);
+                            }}
                             title="Task löschen"
                           >
                             <Trash2 width={16} height={16} />
@@ -228,32 +329,84 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
                 <div className="calendar-day-label">{d.getDate()}</div>
                 <div className="calendar-tasks">
                   {(tasksByDate[getDateKey(d)] || []).map((task) => {
-                    const checked = localTaskState[task.TaskID]?.Checked ?? task.Checked;
-                    const important = localTaskState[task.TaskID]?.Important ?? task.Important;
+                    const checked =
+                      localTaskState[task.TaskID]?.Checked ?? task.Checked;
+                    const important =
+                      localTaskState[task.TaskID]?.Important ?? task.Important;
                     const deleted = localTaskState[task.TaskID]?.deleted;
                     if (deleted) return null;
                     return (
                       <div
                         key={task.TaskID}
-                        ref={el => { taskRefs.current[task.TaskID] = el; }}
-                        className={`calendar-task${checked ? " calendar-task-done" : ""}${scrollingTasks[task.TaskID] ? " scrolling" : ""}`}
+                        ref={(el) => {
+                          taskRefs.current[task.TaskID] = el;
+                        }}
+                        className={`calendar-task${
+                          checked ? " calendar-task-done" : ""
+                        }${scrollingTasks[task.TaskID] ? " scrolling" : ""}`}
                         onClick={() => handleToggleChecked(task)}
                         style={{ display: "flex", alignItems: "center" }}
                       >
                         <span style={{ flex: 1 }}>{task.Name}</span>
-                        <span className="calendar-task-actions" style={{ display: "flex", alignItems: "center", gap: 0 }}>
+                        <span
+                          className="calendar-task-actions"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0,
+                          }}
+                        >
                           <button
                             className="calendar-task-star"
-                            style={{ background: "none", border: "none", color: important ? "#de3163" : "#bbb", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
-                            onClick={e => { e.stopPropagation(); handleToggleImportant(task); }}
-                            title={important ? "Wichtig entfernen" : "Als wichtig markieren"}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: important ? "#de3163" : "#bbb",
+                              margin: 0,
+                              cursor: "pointer",
+                              padding: 0,
+                              width: 22,
+                              height: 22,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleImportant(task);
+                            }}
+                            title={
+                              important
+                                ? "Wichtig entfernen"
+                                : "Als wichtig markieren"
+                            }
                           >
-                            <Star fill={important ? "#de3163" : "none"} stroke="#de3163" width={16} height={16} />
+                            <Star
+                              fill={important ? "#de3163" : "none"}
+                              stroke="#de3163"
+                              width={16}
+                              height={16}
+                            />
                           </button>
                           <button
                             className="calendar-task-delete"
-                            style={{ background: "none", border: "none", color: "#de3163", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
-                            onClick={e => { e.stopPropagation(); handleDeleteTask(task); }}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#de3163",
+                              margin: 0,
+                              cursor: "pointer",
+                              padding: 0,
+                              width: 22,
+                              height: 22,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTask(task);
+                            }}
                             title="Task löschen"
                           >
                             <Trash2 width={16} height={16} />

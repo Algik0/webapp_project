@@ -13,11 +13,11 @@ export default function Register({ onSwitch }: { onSwitch: () => void }) {
     setRegisterError("");
     setSuccessMessage("");
 
-   // Überprüfe, ob die E-Mail ein "@" enthält
-   if (!email.includes("@")) {
-    setRegisterError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-    return;
-  }
+    // Überprüfe, ob die E-Mail ein "@" enthält
+    if (!email.includes("@")) {
+      setRegisterError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+      return;
+    }
 
     try {
       const response = await fetch("/api/register", {
