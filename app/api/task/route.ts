@@ -22,9 +22,15 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const important = searchParams.get("important");
   const myday = searchParams.get("myday");
+  const categoryId = searchParams.get("categoryId");
   let tasks;
   try {
-    if (important === "true") {
+    if (categoryId) {
+      tasks = await sql`
+        SELECT * FROM "WebApp"."Task"
+        WHERE "UserID" = ${userId} AND "CategoryID" = ${categoryId}
+      `;
+    } else if (important === "true") {
       tasks = await sql`
         SELECT * FROM "WebApp"."Task"
         WHERE "UserID" = ${userId} AND "Important" = true
@@ -107,7 +113,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  const { name, important, date } = await req.json();
+  const { name, important, date, categoryId } = await req.json();
   if (!name || !date) {
     return NextResponse.json({ success: false, message: "Name und Datum sind erforderlich" }, { status: 400 });
   }
@@ -116,15 +122,15 @@ export async function POST(req: NextRequest) {
     if (important) {
       // Für Wichtig-Tasks
       task = await sql`
-        INSERT INTO "WebApp"."Task" ("UserID", "Name", "Important", "Checked", "Date")
-        VALUES (${userId}, ${name}, true, false, ${date})
+        INSERT INTO "WebApp"."Task" ("UserID", "Name", "Important", "Checked", "Date", "CategoryID")
+        VALUES (${userId}, ${name}, true, false, ${date}, ${categoryId ?? null})
         RETURNING *
       `;
     } else {
       // Für Mein Tag-Tasks und alle anderen
       task = await sql`
-        INSERT INTO "WebApp"."Task" ("UserID", "Name", "Checked", "Date")
-        VALUES (${userId}, ${name}, false, ${date})
+        INSERT INTO "WebApp"."Task" ("UserID", "Name", "Checked", "Date", "CategoryID")
+        VALUES (${userId}, ${name}, false, ${date}, ${categoryId ?? null})
         RETURNING *
       `;
     }
