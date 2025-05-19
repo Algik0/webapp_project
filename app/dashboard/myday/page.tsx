@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import "../../styles/myday.css";
+import "../../styles/tasks.css";
 import BackButton from "../backbutton";
 import { Plus, Trash2 } from "lucide-react";
 import TaskModal from "../../components/TaskModal";
@@ -101,34 +102,33 @@ export default function MeinTagPage() {
   };
 
   if (loading) return (
-    <div className="myday-container">
-      <div className="myday-loading-centered">Lade Aufgaben...</div>
+    <div className="task-container">
+      <div className="task-loading-centered">Lade Aufgaben...</div>
     </div>
   );
-  if (error) return <div className="myday-container">{error}</div>;
+  if (error) return <div className="task-container task-error">{error}</div>;
 
   return (
-    <div className="myday-container">
-      <div className="myday-header">
+    <div className="task-container">
+      <div className="task-header">
         <BackButton />
-        <h1 className="myday-title">Mein Tag</h1>
+        <h1 className="task-title">Mein Tag</h1>
       </div>
-      <ul className="myday-task-list">
+      <ul className="task-list">
         {tasks.map((task) => (
           <li
             key={task.TaskID}
-            className={`myday-task-list-item${task.Checked ? " myday-task-list-done" : ""}`}
+            className={`task-list-item${task.Checked ? " task-list-done" : ""}`}
             onClick={() => handleToggleChecked(task.TaskID, task.Checked)}
-            style={{ cursor: "pointer" }}
           >
-            <span>{task.Name}</span>
-            <button className="myday-task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
-              <Trash2 className="myday-task-delete-icon" />
+            <span className="task-list-name">{task.Name}</span>
+            <button className="task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
+              <Trash2 className="task-delete-icon" />
             </button>
           </li>
         ))}
       </ul>
-      <button onClick={handleAddTask} className="myday-add-button">
+      <button onClick={handleAddTask} className="task-add-button">
         <Plus className="myday-add-icon" /> Hinzufügen
       </button>
       <TaskModal
