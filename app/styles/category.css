@@ -4,6 +4,7 @@
   background: linear-gradient(to bottom left, #de3163, #000000);
   color: #ffffff;
   padding: 1.5rem;
+  overflow: hidden;
 }
 
 .category-header {
@@ -23,8 +24,9 @@
 .category-list {
   display: flex;
   flex-direction: column;
-  padding: 0;
   gap: 0.5rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 12rem); /* Platz für Header und Add-Button */
 }
 
 .category-list-item {
