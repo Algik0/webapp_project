@@ -44,7 +44,7 @@
 }
 
 .category-list-item:hover {
-  background-color: #f3f4f6;
+  background-color: #fde68a;
 }
 
 .category-list-name {
@@ -66,8 +66,8 @@
   left: 0;
   right: 0;
   width: 100%;
-  background: linear-gradient(to bottom left, #de3163, #000000);
-  color: #ffffff;
+  background: #f3f4f6;
+  color: #de3163;
   padding: 1rem;
   display: flex;
   justify-content: center;
@@ -76,10 +76,14 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  z-index: 100;
 }
 
 .category-add-button:hover {
-  background: linear-gradient(to bottom left, #000000, #de3163);
+  background-color: #fde68a;
 }
 
 .category-loading,
@@ -88,4 +92,14 @@
   margin-top: 2rem;
   color: #fff;
   font-size: 1.1rem;
+}
+
+.category-loading-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  height: 60vh;
+  color: #fff;
 }

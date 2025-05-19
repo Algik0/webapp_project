@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Trash2, Plus } from "lucide-react";
-import BackButton from "../backbutton";
+import BackButton from "../../components/backButton";
+import CategoryModal from "../../components/CategoryModal";
 import "../../styles/category.css";
 
 export default function KategorisierungPage() {
@@ -11,6 +12,7 @@ export default function KategorisierungPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -61,39 +63,41 @@ export default function KategorisierungPage() {
     }
   };
 
-  const handleAddCategory = async () => {
-    const name = prompt("Neue Kategorie:");
-    if (name && name.trim()) {
-      try {
-        const response = await fetch("/api/category", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name: name.trim() }),
-        });
+  const handleAddCategory = async (name?: string) => {
+    if (!name) {
+      setModalOpen(true);
+      return;
+    }
+    try {
+      const response = await fetch("/api/category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: name.trim() }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (data.success) {
-          setCategories((prev) => [
-            ...prev,
-            { id: Date.now(), name: name.trim() },
-          ]);
-        } else {
-          alert(data.message || "Fehler beim Hinzufügen der Kategorie");
-        }
-      } catch (err) {
-        console.error("Fehler beim Hinzufügen der Kategorie:", err);
-        alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+      if (data.success) {
+        setCategories((prev) => [
+          ...prev,
+          { id: Date.now(), name: name.trim() },
+        ]);
+        setModalOpen(false);
+      } else {
+        alert(data.message || "Fehler beim Hinzufügen der Kategorie");
       }
+    } catch (err) {
+      console.error("Fehler beim Hinzufügen der Kategorie:", err);
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
     }
   };
 
   if (loading) {
     return (
       <div className="category-container">
-        <p className="category-loading">Lade Kategorien...</p>
+        <div className="category-loading-centered">Lade Kategorien...</div>
       </div>
     );
   }
@@ -124,9 +128,15 @@ export default function KategorisierungPage() {
         ))}
       </div>
 
-      <button onClick={handleAddCategory} className="category-add-button">
+      <button onClick={() => setModalOpen(true)} className="category-add-button">
         <Plus className="category-add-icon" /> Hinzufügen
       </button>
+      <CategoryModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={name => handleAddCategory(name)}
+        title="Kategorie hinzufügen"
+      />
     </div>
   );
 }

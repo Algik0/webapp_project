@@ -1,0 +1,28 @@
+body, html {
+  min-height: 100vh;
+  background: linear-gradient(to bottom left, #de3163, #000000);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #fff;
+}
+
+#root, main {
+  min-height: 100vh;
+  background: transparent;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  margin: 0;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}

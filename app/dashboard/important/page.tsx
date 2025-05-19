@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import "../../styles/important.css";
 import BackButton from "../backbutton";
+import { Plus, Trash2 } from "lucide-react";
+import TaskModal from "../../components/TaskModal";
 
 interface Task {
   TaskID: number;
@@ -15,6 +17,7 @@ export default function WichtigPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchTasks() {
@@ -58,7 +61,50 @@ export default function WichtigPage() {
     }
   };
 
-  if (loading) return <div className="important-container">Lade...</div>;
+  const handleAddTask = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalSubmit = async (name: string, date: string) => {
+    try {
+      const response = await fetch("/api/task", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, important: true, date }),
+      });
+      const data = await response.json();
+      if (data.success && data.task) {
+        setTasks((prev) => [...prev, data.task]);
+        setModalOpen(false);
+      } else {
+        alert(data.message || "Fehler beim Hinzufügen der Aufgabe");
+      }
+    } catch (err) {
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+    }
+  };
+
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      const response = await fetch(`/api/task?taskId=${taskId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.success) {
+        setTasks((prev) => prev.filter((task) => task.TaskID !== taskId));
+      } else {
+        alert(data.message || "Fehler beim Löschen der Aufgabe");
+      }
+    } catch (err) {
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+    }
+  };
+
+  if (loading) return (
+    <div className="important-container">
+      <div className="important-loading-centered">Lade Aufgaben...</div>
+    </div>
+  );
   if (error) return <div className="important-container">{error}</div>;
 
   return (
@@ -75,10 +121,22 @@ export default function WichtigPage() {
             onClick={() => handleToggleChecked(task.TaskID, task.Checked)}
             style={{ cursor: "pointer", fontWeight: task.Important ? "bold" : "normal" }}
           >
-            {task.Name}
+            <span>{task.Name}</span>
+            <button className="important-task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
+              <Trash2 className="important-task-delete-icon" />
+            </button>
           </li>
         ))}
       </ul>
+      <button onClick={handleAddTask} className="important-add-button">
+        <Plus className="important-add-icon" /> Hinzufügen
+      </button>
+      <TaskModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        title="Wichtigen Task hinzufügen"
+      />
     </div>
   );
 }

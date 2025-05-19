@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import "../../styles/myday.css";
 import BackButton from "../backbutton";
+import { Plus, Trash2 } from "lucide-react";
+import TaskModal from "../../components/TaskModal";
 
 interface Task {
   TaskID: number;
@@ -14,6 +16,7 @@ export default function MeinTagPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchTasks() {
@@ -57,7 +60,51 @@ export default function MeinTagPage() {
     }
   };
 
-  if (loading) return <div className="myday-container">Lade...</div>;
+  const handleAddTask = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalSubmit = async (name: string) => {
+    const today = new Date().toISOString().slice(0, 10);
+    try {
+      const response = await fetch("/api/task", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, date: today }),
+      });
+      const data = await response.json();
+      if (data.success && data.task) {
+        setTasks((prev) => [...prev, data.task]);
+        setModalOpen(false);
+      } else {
+        alert(data.message || "Fehler beim Hinzufügen der Aufgabe");
+      }
+    } catch (err) {
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+    }
+  };
+
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      const response = await fetch(`/api/task?taskId=${taskId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.success) {
+        setTasks((prev) => prev.filter((task) => task.TaskID !== taskId));
+      } else {
+        alert(data.message || "Fehler beim Löschen der Aufgabe");
+      }
+    } catch (err) {
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+    }
+  };
+
+  if (loading) return (
+    <div className="myday-container">
+      <div className="myday-loading-centered">Lade Aufgaben...</div>
+    </div>
+  );
   if (error) return <div className="myday-container">{error}</div>;
 
   return (
@@ -74,10 +121,23 @@ export default function MeinTagPage() {
             onClick={() => handleToggleChecked(task.TaskID, task.Checked)}
             style={{ cursor: "pointer" }}
           >
-            {task.Name}
+            <span>{task.Name}</span>
+            <button className="myday-task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
+              <Trash2 className="myday-task-delete-icon" />
+            </button>
           </li>
         ))}
       </ul>
+      <button onClick={handleAddTask} className="myday-add-button">
+        <Plus className="myday-add-icon" /> Hinzufügen
+      </button>
+      <TaskModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        title="Task für Mein Tag hinzufügen"
+        hideDateField
+      />
     </div>
   );
 }
