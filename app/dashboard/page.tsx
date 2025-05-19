@@ -7,6 +7,7 @@ import { CalendarDays, Star, BookOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import Calendar from "../components/Calendar";
 import { useCachedFetch } from "../components/useCachedFetch";
+import Link from "next/link";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -88,6 +89,13 @@ export default function Dashboard() {
           <BookOpen className="dashboard-icon" />
           <span className="dashboard-button-text">Kategorisierung</span>
         </button>
+
+        <Link href="/dashboard/weather">
+          <button className="dashboard-button" style={{ justifyContent: 'flex-start' }}>
+            <span className="dashboard-icon" role="img" aria-label="Wetter">🌤️</span>
+            <span className="dashboard-button-text">Wetter & Spruch</span>
+          </button>
+        </Link>
       </div>
       <div className="dashboard-bottom">
         <BottomTabBar onCalendarClick={() => setShowCalendar(true)} />

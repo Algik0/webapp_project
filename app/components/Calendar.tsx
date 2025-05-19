@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Star, Trash2 } from "lucide-react";
 
 function getMonday(d: Date) {
   const date = new Date(d);
@@ -25,6 +25,89 @@ export interface CalendarProps {
 export default function Calendar({ tasksByDate }: CalendarProps) {
   const [view, setView] = useState<CalendarView>("week");
   const [current, setCurrent] = useState(new Date());
+  const [localTaskState, setLocalTaskState] = useState<Record<number, { Checked: boolean; Important?: boolean; deleted?: boolean }>>({});
+  const [error, setError] = useState<string | null>(null);
+
+  // Scroll-Handling für Task-Icons
+  const taskRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const [scrollingTasks, setScrollingTasks] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    Object.entries(taskRefs.current).forEach(([taskId, el]) => {
+      if (!el) return;
+      let timeout: any;
+      const onScroll = () => {
+        setScrollingTasks((prev) => ({ ...prev, [taskId]: true }));
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          setScrollingTasks((prev) => ({ ...prev, [taskId]: false }));
+        }, 400);
+      };
+      el.addEventListener("scroll", onScroll);
+      return () => el.removeEventListener("scroll", onScroll);
+    });
+  }, [tasksByDate, view, current]);
+
+  // Handler für Task-Interaktion
+  const handleToggleChecked = async (task: any) => {
+    const newChecked = !(localTaskState[task.TaskID]?.Checked ?? task.Checked);
+    setLocalTaskState((prev) => ({
+      ...prev,
+      [task.TaskID]: {
+        ...prev[task.TaskID],
+        Checked: newChecked,
+        Important: prev[task.TaskID]?.Important ?? task.Important,
+      },
+    }));
+    try {
+      await fetch("/api/task", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId: task.TaskID, checked: newChecked }),
+      });
+    } catch {
+      setError("Aktion fehlgeschlagen (Check). Bitte später erneut versuchen.");
+      setTimeout(() => setError(null), 3000);
+    }
+  };
+  const handleToggleImportant = async (task: any) => {
+    const newImportant = !(localTaskState[task.TaskID]?.Important ?? task.Important);
+    setLocalTaskState((prev) => ({
+      ...prev,
+      [task.TaskID]: {
+        ...prev[task.TaskID],
+        Checked: prev[task.TaskID]?.Checked ?? task.Checked,
+        Important: newImportant,
+      },
+    }));
+    try {
+      await fetch("/api/task", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId: task.TaskID, important: newImportant }),
+      });
+    } catch {
+      setError("Aktion fehlgeschlagen (Wichtig). Bitte später erneut versuchen.");
+      setTimeout(() => setError(null), 3000);
+    }
+  };
+  const handleDeleteTask = async (task: any) => {
+    setLocalTaskState((prev) => ({
+      ...prev,
+      [task.TaskID]: {
+        ...prev[task.TaskID],
+        deleted: true,
+      },
+    }));
+    try {
+      await fetch(`/api/task?taskId=${task.TaskID}`, {
+        method: "DELETE",
+      });
+    } catch {
+      setError("Aktion fehlgeschlagen (Löschen). Bitte später erneut versuchen.");
+      setTimeout(() => setError(null), 3000);
+    }
+  };
 
   // Woche berechnen
   const monday = getMonday(current);
@@ -66,8 +149,23 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
   // Kalenderwoche
   const weekNumber = getWeekNumber(monday);
 
+  // In der Monats- und Wochenansicht: Datumsschlüssel immer als lokales Datum (deutsche Zeitzone) erzeugen
+  const getDateKey = (date: Date) => {
+    // Lokale Zeit, aber mit expliziter Zeitzone für Deutschland
+    const tzDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    const year = tzDate.getFullYear();
+    const month = (tzDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = tzDate.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <div className="calendar-widget">
+      {error && (
+        <div style={{ background: '#de3163', color: '#fff', padding: '0.5rem 1rem', borderRadius: '0.5rem', marginBottom: '1rem', textAlign: 'center' }}>
+          {error}
+        </div>
+      )}
       <div className="calendar-header">
         <button onClick={prev}><ChevronLeft /></button>
         <span className="calendar-title">
@@ -87,9 +185,41 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
               <div key={d.toISOString()} className="calendar-day">
                 <div className="calendar-day-label">{d.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" })}</div>
                 <div className="calendar-tasks">
-                  {(tasksByDate[d.toISOString().slice(0, 10)] || []).map((task) => (
-                    <div key={task.TaskID} className={`calendar-task${task.Checked ? " calendar-task-done" : ""}`}>{task.Name}</div>
-                  ))}
+                  {(tasksByDate[getDateKey(d)] || []).map((task) => {
+                    const checked = localTaskState[task.TaskID]?.Checked ?? task.Checked;
+                    const important = localTaskState[task.TaskID]?.Important ?? task.Important;
+                    const deleted = localTaskState[task.TaskID]?.deleted;
+                    if (deleted) return null;
+                    return (
+                      <div
+                        key={task.TaskID}
+                        ref={el => { taskRefs.current[task.TaskID] = el; }}
+                        className={`calendar-task${checked ? " calendar-task-done" : ""}${scrollingTasks[task.TaskID] ? " scrolling" : ""}`}
+                        onClick={() => handleToggleChecked(task)}
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        <span style={{ flex: 1 }}>{task.Name}</span>
+                        <span className="calendar-task-actions" style={{ display: "flex", alignItems: "center", gap: 0 }}>
+                          <button
+                            className="calendar-task-star"
+                            style={{ background: "none", border: "none", color: important ? "#de3163" : "#bbb", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
+                            onClick={e => { e.stopPropagation(); handleToggleImportant(task); }}
+                            title={important ? "Wichtig entfernen" : "Als wichtig markieren"}
+                          >
+                            <Star fill={important ? "#de3163" : "none"} stroke="#de3163" width={16} height={16} />
+                          </button>
+                          <button
+                            className="calendar-task-delete"
+                            style={{ background: "none", border: "none", color: "#de3163", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
+                            onClick={e => { e.stopPropagation(); handleDeleteTask(task); }}
+                            title="Task löschen"
+                          >
+                            <Trash2 width={16} height={16} />
+                          </button>
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))
@@ -97,9 +227,41 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
               <div key={d.toISOString()} className="calendar-day">
                 <div className="calendar-day-label">{d.getDate()}</div>
                 <div className="calendar-tasks">
-                  {(tasksByDate[d.toISOString().slice(0, 10)] || []).map((task) => (
-                    <div key={task.TaskID} className={`calendar-task${task.Checked ? " calendar-task-done" : ""}`}>{task.Name}</div>
-                  ))}
+                  {(tasksByDate[getDateKey(d)] || []).map((task) => {
+                    const checked = localTaskState[task.TaskID]?.Checked ?? task.Checked;
+                    const important = localTaskState[task.TaskID]?.Important ?? task.Important;
+                    const deleted = localTaskState[task.TaskID]?.deleted;
+                    if (deleted) return null;
+                    return (
+                      <div
+                        key={task.TaskID}
+                        ref={el => { taskRefs.current[task.TaskID] = el; }}
+                        className={`calendar-task${checked ? " calendar-task-done" : ""}${scrollingTasks[task.TaskID] ? " scrolling" : ""}`}
+                        onClick={() => handleToggleChecked(task)}
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        <span style={{ flex: 1 }}>{task.Name}</span>
+                        <span className="calendar-task-actions" style={{ display: "flex", alignItems: "center", gap: 0 }}>
+                          <button
+                            className="calendar-task-star"
+                            style={{ background: "none", border: "none", color: important ? "#de3163" : "#bbb", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
+                            onClick={e => { e.stopPropagation(); handleToggleImportant(task); }}
+                            title={important ? "Wichtig entfernen" : "Als wichtig markieren"}
+                          >
+                            <Star fill={important ? "#de3163" : "none"} stroke="#de3163" width={16} height={16} />
+                          </button>
+                          <button
+                            className="calendar-task-delete"
+                            style={{ background: "none", border: "none", color: "#de3163", margin: 0, cursor: "pointer", padding: 0, width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}
+                            onClick={e => { e.stopPropagation(); handleDeleteTask(task); }}
+                            title="Task löschen"
+                          >
+                            <Trash2 width={16} height={16} />
+                          </button>
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}

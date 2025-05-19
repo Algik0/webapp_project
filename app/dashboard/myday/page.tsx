@@ -140,10 +140,10 @@ export default function MeinTagPage() {
             <span className="task-list-name">{task.Name}</span>
             <div className="task-actions">
               <button className="task-important" onClick={e => { e.stopPropagation(); handleToggleImportant(task.TaskID, task.Important); }}>
-                <Star className="task-important-icon" />
+                <Star className="task-important-icon" fill={task.Important ? "#de3163" : "none"} stroke="#de3163" width={16} height={16} />
               </button>
               <button className="task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
-                <Trash2 className="task-delete-icon" />
+                <Trash2 className="task-delete-icon" width={16} height={16} />
               </button>
             </div>
           </li>
