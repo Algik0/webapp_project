@@ -7,6 +7,8 @@ import BackButton from "../../components/backButton";
 import { Plus, Trash2 } from "lucide-react";
 import TaskModal from "../../components/TaskModal";
 import { Star } from "lucide-react";
+import TaskListSkeleton from "../../components/TaskListSkeleton";
+import { useCachedFetch } from "../../components/useCachedFetch";
 
 interface Task {
   TaskID: number;
@@ -16,37 +18,30 @@ interface Task {
 }
 
 export default function WichtigPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const response = await fetch("/api/task?important=true");
-        const data = await response.json();
-        if (data.success) {
-          setTasks(data.tasks);
-        } else {
-          setError(data.message || "Fehler beim Laden der Tasks");
-        }
-      } catch (err) {
-        setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTasks();
-  }, []);
+  const {
+    data: tasks,
+    loading,
+    error,
+    refresh,
+    setData: setTasks,
+  } = useCachedFetch<Task[]>(
+    "important_tasks",
+    async () => {
+      const response = await fetch("/api/task?important=true");
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message || "Fehler beim Laden der Tasks");
+      return data.tasks;
+    },
+    { refreshOnFocus: true }
+  );
 
   const handleToggleChecked = async (taskId: number, checked: boolean) => {
     try {
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.TaskID === taskId ? { ...task, Checked: !checked } : task
-        )
-      );
+      setTasks((prev) => (prev ? prev.map((task) =>
+        task.TaskID === taskId ? { ...task, Checked: !checked } : task
+      ) : []));
       const response = await fetch("/api/task", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -66,15 +61,11 @@ export default function WichtigPage() {
   const handleToggleImportant = async (taskId: number, important: boolean) => {
     try {
       if (important) {
-        // Wenn Stern entfernt wird, Task direkt aus der Liste entfernen
-        setTasks((prev) => prev.filter((task) => task.TaskID !== taskId));
+        setTasks((prev) => (prev ? prev.filter((task) => task.TaskID !== taskId) : []));
       } else {
-        // Wenn Stern gesetzt wird, Task in der Liste lassen und toggeln
-        setTasks((prev) =>
-          prev.map((task) =>
-            task.TaskID === taskId ? { ...task, Important: !important } : task
-          )
-        );
+        setTasks((prev) => (prev ? prev.map((task) =>
+          task.TaskID === taskId ? { ...task, Important: !important } : task
+        ) : []));
       }
       const response = await fetch("/api/task", {
         method: "PATCH",
@@ -103,7 +94,7 @@ export default function WichtigPage() {
       });
       const data = await response.json();
       if (data.success && data.task) {
-        setTasks((prev) => [...prev, data.task]);
+        setTasks((prev) => (prev ? [...prev, data.task] : [data.task]));
         setModalOpen(false);
       } else {
         alert(data.message || "Fehler beim Hinzufügen der Aufgabe");
@@ -120,7 +111,7 @@ export default function WichtigPage() {
       });
       const data = await response.json();
       if (data.success) {
-        setTasks((prev) => prev.filter((task) => task.TaskID !== taskId));
+        setTasks((prev) => (prev ? prev.filter((task) => task.TaskID !== taskId) : []));
       } else {
         alert(data.message || "Fehler beim Löschen der Aufgabe");
       }
@@ -129,11 +120,7 @@ export default function WichtigPage() {
     }
   };
 
-  if (loading) return (
-    <div className="task-container">
-      <div className="task-loading-centered">Lade Aufgaben...</div>
-    </div>
-  );
+  if (loading) return <TaskListSkeleton />;
   if (error) return <div className="task-container task-error">{error}</div>;
 
   return (
@@ -143,7 +130,7 @@ export default function WichtigPage() {
         <h1 className="task-title">Wichtig</h1>
       </div>
       <ul className="task-list">
-        {tasks.map((task) => (
+        {(tasks || []).map((task) => (
           <li
             key={task.TaskID}
             className={`task-list-item${task.Checked ? " task-list-done" : ""}`}

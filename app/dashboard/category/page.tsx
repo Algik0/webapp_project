@@ -4,44 +4,32 @@ import { useEffect, useState } from "react";
 import { Trash2, Plus } from "lucide-react";
 import BackButton from "../../components/backButton";
 import CategoryModal from "../../components/CategoryModal";
+import CategoryListSkeleton from "../../components/CategoryListSkeleton";
+import { useCachedFetch } from "../../components/useCachedFetch";
 import "../../styles/category.css";
 
 export default function KategorisierungPage() {
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await fetch(`/api/category`);
-        const data = await response.json();
-
-        if (data.success) {
-          setCategories(
-            data.categories.map(
-              (cat: { CategoryID: number; Name: string }) => ({
-                id: cat.CategoryID,
-                name: cat.Name,
-              })
-            )
-          );
-        } else {
-          setError(data.message || "Fehler beim Laden der Kategorien");
-        }
-      } catch (err) {
-        console.error("Fehler beim Abrufen der Kategorien:", err);
-        setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCategories();
-  }, []);
+  const {
+    data: categories,
+    loading,
+    error,
+    refresh,
+    setData: setCategories,
+  } = useCachedFetch<{ id: number; name: string }[]>(
+    "categories",
+    async () => {
+      const response = await fetch(`/api/category`);
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message || "Fehler beim Laden der Kategorien");
+      return data.categories.map((cat: { CategoryID: number; Name: string }) => ({
+        id: cat.CategoryID,
+        name: cat.Name,
+      }));
+    },
+    { refreshOnFocus: true }
+  );
 
   const deleteCategory = async (id: number) => {
     try {
@@ -52,8 +40,7 @@ export default function KategorisierungPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Entferne die Kategorie aus dem lokalen Zustand
-        setCategories((prev) => prev.filter((c) => c.id !== id));
+        setCategories((prev) => (prev ? prev.filter((c) => c.id !== id) : []));
       } else {
         alert(data.message || "Fehler beim Löschen der Kategorie");
       }
@@ -80,10 +67,7 @@ export default function KategorisierungPage() {
       const data = await response.json();
 
       if (data.success) {
-        setCategories((prev) => [
-          ...prev,
-          { id: Date.now(), name: name.trim() },
-        ]);
+        setCategories((prev) => (prev ? [...prev, { id: Date.now(), name: name.trim() }] : [{ id: Date.now(), name: name.trim() }]));
         setModalOpen(false);
       } else {
         alert(data.message || "Fehler beim Hinzufügen der Kategorie");
@@ -95,11 +79,7 @@ export default function KategorisierungPage() {
   };
 
   if (loading) {
-    return (
-      <div className="category-container">
-        <div className="category-loading-centered">Lade Kategorien...</div>
-      </div>
-    );
+    return <CategoryListSkeleton />;
   }
 
   if (error) {
@@ -116,9 +96,8 @@ export default function KategorisierungPage() {
         <BackButton />
         <h1 className="category-title">Kategorisierung</h1>
       </div>
-
       <div className="category-list">
-        {categories.map((cat) => (
+        {(categories || []).map((cat) => (
           <div key={cat.id} className="category-list-item">
             <span className="category-list-name">{cat.name}</span>
             <button className="category-delete" onClick={() => deleteCategory(cat.id)}>
@@ -127,7 +106,6 @@ export default function KategorisierungPage() {
           </div>
         ))}
       </div>
-
       <button onClick={() => setModalOpen(true)} className="category-add-button">
         <Plus className="category-add-icon" /> Hinzufügen
       </button>

@@ -137,3 +137,15 @@
   height: 60vh;
   color: #fff;
 }
+
+/* Skeleton Loader Styles */
+.skeleton-box {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f3f3f3 50%, #e0e0e0 75%);
+  border-radius: 4px;
+  animation: skeleton-loading 1.2s infinite linear;
+  display: inline-block;
+}
+@keyframes skeleton-loading {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}

@@ -4,17 +4,17 @@ import "../styles/dashboard.css";
 import BottomTabBar from "./bottomtabbar";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Star, BookOpen } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const router = useRouter();
 
   const handleLogout = () => {
-    // Lösche das userId-Cookie für alle Pfade und Domains (auch mit Secure-Flag)
     document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname + ";";
     document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure;";
     document.cookie = "userId=; Max-Age=0; path=/;";
-    router.push("/"); // Navigiert zur WelcomePage
+    window.location.href = "/";
   };
 
   return (

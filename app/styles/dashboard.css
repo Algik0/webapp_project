@@ -102,13 +102,12 @@ body, html {
   height: 1.5rem;
 }
 
-/* Styles for the dashboard logout button */
 .dashboard-logout-btn {
   position: absolute;
   top: 1.5rem;
   right: 2rem;
   background: #ffffff;
-  color: linear-gradient(to bottom left, #de3163, #000000);
+  color: #de3163;
   border: none;
   border-radius: 0.5rem;
   padding: 0.6rem 1.2rem;
