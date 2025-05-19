@@ -22,11 +22,14 @@ export default function KategorisierungPage() {
     async () => {
       const response = await fetch(`/api/category`);
       const data = await response.json();
-      if (!data.success) throw new Error(data.message || "Fehler beim Laden der Kategorien");
-      return data.categories.map((cat: { CategoryID: number; Name: string }) => ({
-        id: cat.CategoryID,
-        name: cat.Name,
-      }));
+      if (!data.success)
+        throw new Error(data.message || "Fehler beim Laden der Kategorien");
+      return data.categories.map(
+        (cat: { CategoryID: number; Name: string }) => ({
+          id: cat.CategoryID,
+          name: cat.Name,
+        })
+      );
     },
     { refreshOnFocus: true }
   );
@@ -67,7 +70,11 @@ export default function KategorisierungPage() {
       const data = await response.json();
 
       if (data.success) {
-        setCategories((prev) => (prev ? [...prev, { id: Date.now(), name: name.trim() }] : [{ id: Date.now(), name: name.trim() }]));
+        setCategories((prev) =>
+          prev
+            ? [...prev, { id: Date.now(), name: name.trim() }]
+            : [{ id: Date.now(), name: name.trim() }]
+        );
         setModalOpen(false);
       } else {
         alert(data.message || "Fehler beim Hinzufügen der Kategorie");
@@ -99,22 +106,34 @@ export default function KategorisierungPage() {
       <div className="category-list">
         {(categories || []).map((cat) => (
           <div key={cat.id} className="category-list-item">
-            <span className="category-list-name" style={{ cursor: 'pointer' }} onClick={() => window.location.assign(`/dashboard/category/${cat.id}`)}>
+            <span
+              className="category-list-name"
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                window.location.assign(`/dashboard/category/${cat.id}`)
+              }
+            >
               {cat.name}
             </span>
-            <button className="category-delete" onClick={() => deleteCategory(cat.id)}>
+            <button
+              className="category-delete"
+              onClick={() => deleteCategory(cat.id)}
+            >
               <Trash2 className="category-delete-icon" />
             </button>
           </div>
         ))}
       </div>
-      <button onClick={() => setModalOpen(true)} className="category-add-button">
+      <button
+        onClick={() => setModalOpen(true)}
+        className="category-add-button"
+      >
         <Plus className="category-add-icon" /> Hinzufügen
       </button>
       <CategoryModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={name => handleAddCategory(name)}
+        onSubmit={(name) => handleAddCategory(name)}
         title="Kategorie hinzufügen"
       />
     </div>

@@ -8,7 +8,12 @@ interface CategoryModalProps {
   title?: string;
 }
 
-export default function CategoryModal({ open, onClose, onSubmit, title }: CategoryModalProps) {
+export default function CategoryModal({
+  open,
+  onClose,
+  onSubmit,
+  title,
+}: CategoryModalProps) {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
@@ -35,13 +40,17 @@ export default function CategoryModal({ open, onClose, onSubmit, title }: Catego
             className="modal-input"
             type="text"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Kategoriename"
             autoFocus
           />
           {error && <div className="modal-error">{error}</div>}
-          <button className="modal-submit" type="submit">Hinzufügen</button>
-          <button className="modal-cancel" type="button" onClick={onClose}>Abbrechen</button>
+          <button className="modal-submit" type="submit">
+            Hinzufügen
+          </button>
+          <button className="modal-cancel" type="button" onClick={onClose}>
+            Abbrechen
+          </button>
         </form>
       </div>
     </div>

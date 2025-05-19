@@ -29,7 +29,8 @@ export default function MeinTagPage() {
     async () => {
       const response = await fetch("/api/task?myday=true");
       const data = await response.json();
-      if (!data.success) throw new Error(data.message || "Fehler beim Laden der Tasks");
+      if (!data.success)
+        throw new Error(data.message || "Fehler beim Laden der Tasks");
       return data.tasks;
     },
     { refreshOnFocus: true }
@@ -38,9 +39,11 @@ export default function MeinTagPage() {
   const handleToggleChecked = async (taskId: number, checked: boolean) => {
     try {
       setTasks((prev) =>
-        prev ? prev.map((task) =>
-          task.TaskID === taskId ? { ...task, Checked: !checked } : task
-        ) : []
+        prev
+          ? prev.map((task) =>
+              task.TaskID === taskId ? { ...task, Checked: !checked } : task
+            )
+          : []
       );
       const response = await fetch("/api/task", {
         method: "PATCH",
@@ -58,12 +61,17 @@ export default function MeinTagPage() {
     }
   };
 
-  const handleToggleImportant = async (taskId: number, important: boolean | undefined) => {
+  const handleToggleImportant = async (
+    taskId: number,
+    important: boolean | undefined
+  ) => {
     try {
       setTasks((prev) =>
-        prev ? prev.map((task) =>
-          task.TaskID === taskId ? { ...task, Important: !important } : task
-        ) : []
+        prev
+          ? prev.map((task) =>
+              task.TaskID === taskId ? { ...task, Important: !important } : task
+            )
+          : []
       );
       const response = await fetch("/api/task", {
         method: "PATCH",
@@ -112,7 +120,9 @@ export default function MeinTagPage() {
       });
       const data = await response.json();
       if (data.success) {
-        setTasks((prev) => (prev ? prev.filter((task) => task.TaskID !== taskId) : []));
+        setTasks((prev) =>
+          prev ? prev.filter((task) => task.TaskID !== taskId) : []
+        );
       } else {
         alert(data.message || "Fehler beim Löschen der Aufgabe");
       }
@@ -139,10 +149,28 @@ export default function MeinTagPage() {
           >
             <span className="task-list-name">{task.Name}</span>
             <div className="task-actions">
-              <button className="task-important" onClick={e => { e.stopPropagation(); handleToggleImportant(task.TaskID, task.Important); }}>
-                <Star className="task-important-icon" fill={task.Important ? "#de3163" : "none"} stroke="#de3163" width={16} height={16} />
+              <button
+                className="task-important"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleImportant(task.TaskID, task.Important);
+                }}
+              >
+                <Star
+                  className="task-important-icon"
+                  fill={task.Important ? "#de3163" : "none"}
+                  stroke="#de3163"
+                  width={16}
+                  height={16}
+                />
               </button>
-              <button className="task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
+              <button
+                className="task-delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteTask(task.TaskID);
+                }}
+              >
                 <Trash2 className="task-delete-icon" width={16} height={16} />
               </button>
             </div>

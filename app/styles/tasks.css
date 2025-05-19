@@ -31,7 +31,7 @@
   margin: 0;
   padding: 0;
   overflow-y: auto;
-  max-height: calc(100vh - 12rem); 
+  max-height: calc(100vh - 12rem);
 }
 
 .task-list-item {
@@ -146,6 +146,10 @@
   display: inline-block;
 }
 @keyframes skeleton-loading {
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
 }

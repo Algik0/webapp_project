@@ -14,20 +14,29 @@ export default function Dashboard() {
   const [showCalendar, setShowCalendar] = useState(false);
 
   const handleLogout = () => {
-    document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname + ";";
+    document.cookie =
+      "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
+      window.location.hostname +
+      ";";
     document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure;";
+    document.cookie =
+      "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure;";
     document.cookie = "userId=; Max-Age=0; path=/;";
     window.location.href = "/";
   };
 
   // Kalender-Tasks laden
-  const { data: tasks, loading, error } = useCachedFetch<any[]>(
+  const {
+    data: tasks,
+    loading,
+    error,
+  } = useCachedFetch<any[]>(
     "calendar_tasks",
     async () => {
       const res = await fetch("/api/task");
       const data = await res.json();
-      if (!data.success) throw new Error(data.message || "Fehler beim Laden der Tasks");
+      if (!data.success)
+        throw new Error(data.message || "Fehler beim Laden der Tasks");
       return data.tasks;
     },
     { refreshOnFocus: true }
@@ -91,8 +100,13 @@ export default function Dashboard() {
         </button>
 
         <Link href="/dashboard/weather">
-          <button className="dashboard-button" style={{ justifyContent: 'flex-start' }}>
-            <span className="dashboard-icon" role="img" aria-label="Wetter">🌤️</span>
+          <button
+            className="dashboard-button"
+            style={{ justifyContent: "flex-start" }}
+          >
+            <span className="dashboard-icon" role="img" aria-label="Wetter">
+              🌤️
+            </span>
             <span className="dashboard-button-text">Wetter & Spruch</span>
           </button>
         </Link>
@@ -103,7 +117,12 @@ export default function Dashboard() {
       {showCalendar && (
         <div className="calendar-modal-overlay">
           <div className="calendar-modal-window">
-            <button className="calendar-modal-close" onClick={() => setShowCalendar(false)}>×</button>
+            <button
+              className="calendar-modal-close"
+              onClick={() => setShowCalendar(false)}
+            >
+              ×
+            </button>
             <h1>📅 Kalender</h1>
             {loading ? (
               <div>Kalender wird geladen...</div>
