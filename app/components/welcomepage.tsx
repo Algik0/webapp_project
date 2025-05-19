@@ -2,8 +2,7 @@ import React from 'react';
 import Login from "./login";
 import Register from "./register";
 import { useState } from "react";
-import Image from "next/image";
-import taskademiaLogo from "../images/taskademia.png";
+import "../styles/welcomepage.css";
 
 export default function Home() {
   const [isRegistering, setIsRegistering] = useState(false); // Zustand für den Registrierungsstatu
@@ -11,88 +10,6 @@ export default function Home() {
 
   return (
     <div>
-      <style>
-        {`
-          body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom left, #de3163, #000000);
-            color: #333;
-          }
-
-          .banner {
-            width: 100%;
-            height: 420px;
-            background-image: url('../images/taskademia.png');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-start;
-            padding: 15px;
-            box-sizing: border-box;
-          }
-
-          .login-box {
-            background-color: white;
-            border-radius: 10px;
-            width: 160px;
-            font-size: 16px;
-            text-align: center;
-          }
-
-          .login-box button {
-            padding: 15px;
-            background: linear-gradient(to bottom left, #de3163, #000000);
-            border: none;
-            color: white;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-          }
-
-          .login-box button:hover {
-            background: linear-gradient(to bottom left, #000000, #de3163);
-          }
-
-          .slogan {
-            text-align: center;
-            background-color: white;
-            font-size: 28px;
-            font-weight: bold;
-            padding: 30px 20px;
-            border-radius: 20px;
-            margin: 40px auto 20px auto;
-            max-width: 700px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-          }
-
-          .hardfacts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            padding: 40px;
-          }
-
-          .fact-box {
-            background-color: white;
-            padding: 30px 20px;
-            border-radius: 16px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            font-size: 18px;
-            line-height: 1.6;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-          }
-
-          .fact-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-          }
-        `}
-      </style>
-
       <div className="banner">
         <div className="login-box">
           {isRegistering ? (

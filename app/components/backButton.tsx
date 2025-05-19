@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import "../styles/backbutton.css";
 
 export default function BackButton() {
   const router = useRouter();
@@ -9,10 +10,9 @@ export default function BackButton() {
   return (
     <button
       onClick={() => router.back()}
-      className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition"
+      className="back-button"
     >
-      <ArrowLeft className="w-5 h-5" />
-      <span>Zurück</span>
+      <ArrowLeft className="back-icon" />
     </button>
   );
 }

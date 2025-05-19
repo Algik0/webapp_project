@@ -121,7 +121,7 @@ export default function KategorisierungPage() {
         {categories.map((cat) => (
           <div key={cat.id} className="category-list-item">
             <span className="category-list-name">{cat.name}</span>
-            <button className="category-list-delete" onClick={() => deleteCategory(cat.id)}>
+            <button className="category-delete" onClick={() => deleteCategory(cat.id)}>
               <Trash2 className="category-delete-icon" />
             </button>
           </div>

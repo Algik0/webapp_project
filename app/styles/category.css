@@ -25,8 +25,11 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   overflow-y: auto;
-  max-height: calc(100vh - 12rem); /* Platz für Header und Add-Button */
+  max-height: calc(100vh - 12rem); 
 }
 
 .category-list-item {
@@ -51,12 +54,17 @@
   font-weight: 500;
 }
 
-.category-list-delete {
+.category-delete {
   background: none;
   border: none;
   cursor: pointer;
   color: #de3163;
   padding: 0.2rem;
+}
+
+.category-delete-icon{
+    width: 1.1rem;
+  height: 1.1rem;
 }
 
 .category-add-button {

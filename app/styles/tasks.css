@@ -31,7 +31,7 @@
   margin: 0;
   padding: 0;
   overflow-y: auto;
-  max-height: calc(100vh - 12rem); /* Platz für Header und Add-Button */
+  max-height: calc(100vh - 12rem); 
 }
 
 .task-list-item {
@@ -56,6 +56,13 @@
   color: #9ca3af;
 }
 
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+}
+
 .task-delete {
   background: none;
   border: none;
@@ -65,6 +72,19 @@
 }
 
 .task-delete-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.task-important {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #de3163;
+  padding: 0.2rem;
+}
+
+.task-important-icon {
   width: 1.1rem;
   height: 1.1rem;
 }

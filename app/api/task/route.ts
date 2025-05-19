@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest) {
       { status: 400 }
     );
   }
-  const { taskId, checked } = await req.json();
+  const { taskId, checked, important } = await req.json();
   if (!taskId) {
     return NextResponse.json({ success: false, message: "TaskID fehlt" }, { status: 400 });
   }
@@ -75,10 +75,11 @@ export async function PATCH(req: NextRequest) {
         SET "Checked" = ${checked}
         WHERE "TaskID" = ${taskId} AND "UserID" = ${userId}
       `;
-    } else {
+    }
+    if (typeof important === "boolean") {
       await sql`
         UPDATE "WebApp"."Task"
-        SET "Checked" = true
+        SET "Important" = ${important}
         WHERE "TaskID" = ${taskId} AND "UserID" = ${userId}
       `;
     }

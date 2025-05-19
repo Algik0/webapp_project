@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import "../../styles/important.css";
 import "../../styles/tasks.css";
-import BackButton from "../backbutton";
+import BackButton from "../../components/backButton";
 import { Plus, Trash2 } from "lucide-react";
 import TaskModal from "../../components/TaskModal";
+import { Star } from "lucide-react";
 
 interface Task {
   TaskID: number;
@@ -59,6 +60,33 @@ export default function WichtigPage() {
     } catch (err) {
       alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
       // Optional: Task wieder zurücksetzen
+    }
+  };
+
+  const handleToggleImportant = async (taskId: number, important: boolean) => {
+    try {
+      if (important) {
+        // Wenn Stern entfernt wird, Task direkt aus der Liste entfernen
+        setTasks((prev) => prev.filter((task) => task.TaskID !== taskId));
+      } else {
+        // Wenn Stern gesetzt wird, Task in der Liste lassen und toggeln
+        setTasks((prev) =>
+          prev.map((task) =>
+            task.TaskID === taskId ? { ...task, Important: !important } : task
+          )
+        );
+      }
+      const response = await fetch("/api/task", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId, important: !important }),
+      });
+      const data = await response.json();
+      if (!data.success) {
+        alert(data.message || "Fehler beim Aktualisieren des Tasks");
+      }
+    } catch (err) {
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
     }
   };
 
@@ -123,9 +151,14 @@ export default function WichtigPage() {
             style={{ fontWeight: task.Important ? "bold" : "normal" }}
           >
             <span className="task-list-name">{task.Name}</span>
-            <button className="task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
-              <Trash2 className="task-delete-icon" />
-            </button>
+            <div className="task-actions">
+              <button className="task-important" onClick={e => { e.stopPropagation(); handleToggleImportant(task.TaskID, task.Important); }}>
+                <Star className="task-important-icon" />
+              </button>
+              <button className="task-delete" onClick={e => { e.stopPropagation(); handleDeleteTask(task.TaskID); }}>
+                <Trash2 className="task-delete-icon" />
+              </button>
+            </div>
           </li>
         ))}
       </ul>
