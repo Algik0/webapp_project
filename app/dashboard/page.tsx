@@ -13,13 +13,8 @@ export default function Dashboard() {
   const [showCalendar, setShowCalendar] = useState(false);
 
   const handleLogout = async () => {
-    // Lösche explizit alle Cookies (inkl. Session-Cookies)
-    document.cookie.split(";").forEach(function (c) {
-      const eq = c.indexOf("=");
-      const name = eq > -1 ? c.substr(0, eq).trim() : c.trim();
-      document.cookie =
-        name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
-    });
+    // Serverseitiges Logout: Cookie löschen
+    await fetch("/api/logout", { method: "POST" });
     window.location.href = "/";
   };
 
