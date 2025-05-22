@@ -9,9 +9,9 @@ export function middleware(request: NextRequest) {
 
   // Überprüfe, ob die aktuelle Route geschützt ist
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
-    const userId = request.cookies.get("userId")?.value;
-
-    // Wenn kein userId-Cookie vorhanden ist, leite zur Login-Seite weiter
+    // Prüfe ALLE Cookies auf userId (auch mit anderen Attributen)
+    const allCookies = request.headers.get('cookie') || '';
+    const userId = allCookies.match(/userId=([^;]+)/)?.[1];
     if (!userId) {
       const loginUrl = new URL("/", request.url);
       return NextResponse.redirect(loginUrl);

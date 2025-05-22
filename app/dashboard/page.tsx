@@ -13,15 +13,14 @@ export default function Dashboard() {
   const router = useRouter();
   const [showCalendar, setShowCalendar] = useState(false);
 
-  const handleLogout = () => {
-    document.cookie =
-      "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
-      window.location.hostname +
-      ";";
-    document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie =
-      "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure;";
-    document.cookie = "userId=; Max-Age=0; path=/;";
+  const handleLogout = async () => {
+    // Lösche explizit alle Cookies (inkl. Session-Cookies)
+    document.cookie.split(";").forEach(function (c) {
+      const eq = c.indexOf("=");
+      const name = eq > -1 ? c.substr(0, eq).trim() : c.trim();
+      document.cookie =
+        name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+    });
     window.location.href = "/";
   };
 
