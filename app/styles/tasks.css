@@ -1,6 +1,6 @@
-/* Gemeinsame Styles für Task-Listen (MyDay, Important) */
+/* --- Gemeinsame Styles für Tasks, Kategorien, Skeletons (zusammengeführt) --- */
 
-.task-container {
+.shared-container {
   min-height: 100vh;
   padding-bottom: 5rem;
   background: linear-gradient(to bottom left, #de3163, #000000);
@@ -9,21 +9,21 @@
   overflow: hidden;
 }
 
-.task-header {
+.shared-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
 }
 
-.task-title {
+.shared-title {
   font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   color: #ffffff;
 }
 
-.task-list {
+.shared-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -34,7 +34,7 @@
   max-height: calc(100vh - 12rem);
 }
 
-.task-list-item {
+.shared-list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -47,23 +47,23 @@
   cursor: default;
 }
 
-.task-list-item:hover {
+.shared-list-item:hover {
   background-color: #fde68a;
 }
 
-.task-list-done {
+.shared-list-done {
   text-decoration: line-through;
   color: #9ca3af;
 }
 
-.task-actions {
+.shared-actions {
   display: flex;
   align-items: center;
   gap: 0.3rem;
   margin-left: auto;
 }
 
-.task-delete {
+.shared-delete, .shared-important {
   background: none;
   border: none;
   cursor: pointer;
@@ -71,30 +71,17 @@
   padding: 0.2rem;
 }
 
-.task-delete-icon {
+.shared-delete-icon, .shared-important-icon {
   width: 1.1rem;
   height: 1.1rem;
 }
 
-.task-important {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #de3163;
-  padding: 0.2rem;
-}
-
-.task-important-icon {
-  width: 1.1rem;
-  height: 1.1rem;
-}
-
-.task-list-name {
+.shared-list-name {
   font-size: 1rem;
   font-weight: 500;
 }
 
-.task-add-button {
+.shared-add-button {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -116,19 +103,19 @@
   z-index: 100;
 }
 
-.task-add-button:hover {
+.shared-add-button:hover {
   background-color: #fde68a;
 }
 
-.task-loading,
-.task-error {
+.shared-loading,
+.shared-error {
   text-align: center;
   margin-top: 2rem;
   color: #fff;
   font-size: 1.1rem;
 }
 
-.task-loading-centered {
+.shared-loading-centered {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -138,7 +125,6 @@
   color: #fff;
 }
 
-/* Skeleton Loader Styles */
 .skeleton-box {
   background: linear-gradient(90deg, #e0e0e0 25%, #f3f3f3 50%, #e0e0e0 75%);
   border-radius: 4px;

@@ -1,24 +1,23 @@
 import React from "react";
-import "../styles/category.css";
 
 export default function CategoryListSkeleton() {
   return (
-    <div className="category-container">
-      <div className="category-header">
+    <div className="shared-container">
+      <div className="shared-header">
         <div
-          className="category-title skeleton-box"
+          className="shared-title skeleton-box"
           style={{ width: 140, height: 28 }}
         />
       </div>
-      <div className="category-list">
+      <div className="shared-list">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="category-list-item">
+          <div key={i} className="shared-list-item">
             <span
-              className="category-list-name skeleton-box"
+              className="shared-list-name skeleton-box"
               style={{ width: 100, height: 18 }}
             />
             <span
-              className="category-delete-icon skeleton-box"
+              className="shared-delete-icon skeleton-box"
               style={{ width: 18, height: 18 }}
             />
           </div>

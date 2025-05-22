@@ -25,11 +25,37 @@ export async function GET(request: Request) {
       );
     }
 
-    // Hole alle Kategorien für den Benutzer
+    // Hole die CategoryID aus den Query-Parametern
+    const { searchParams } = new URL(request.url);
+    const categoryId = searchParams.get("categoryId");
+
+    if (categoryId) {
+      // Einzelne Kategorie prüfen
+      const categories = await sql`
+        SELECT c."CategoryID", c."Name", COUNT(t."TaskID") AS "TaskCount"
+        FROM "WebApp"."Category" c
+        LEFT JOIN "WebApp"."Task" t ON t."CategoryID" = c."CategoryID"
+        WHERE c."UserID" = ${userId} AND c."CategoryID" = ${categoryId}
+        GROUP BY c."CategoryID", c."Name"
+      `;
+
+      if (!categories.length) {
+        return NextResponse.json(
+          { success: false, message: "Kategorie nicht gefunden oder kein Zugriff" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ success: true, category: categories[0] });
+    }
+
+    // Hole alle Kategorien für den Benutzer, inkl. Task-Anzahl
     const categories = await sql`
-      SELECT "CategoryID", "Name"
-      FROM "WebApp"."Category"
-      WHERE "UserID" = ${userId}
+      SELECT c."CategoryID", c."Name", COUNT(t."TaskID") AS "TaskCount"
+      FROM "WebApp"."Category" c
+      LEFT JOIN "WebApp"."Task" t ON t."CategoryID" = c."CategoryID"
+      WHERE c."UserID" = ${userId}
+      GROUP BY c."CategoryID", c."Name"
     `;
 
     return NextResponse.json({ success: true, categories });
@@ -129,6 +155,12 @@ export async function DELETE(request: Request) {
         { status: 400 }
       );
     }
+
+    // Lösche zuerst alle Tasks dieser Kategorie
+    await sql`
+      DELETE FROM "WebApp"."Task"
+      WHERE "CategoryID" = ${categoryId} AND "UserID" = ${userId}
+    `;
 
     // Lösche die Kategorie aus der Datenbank
     await sql`
