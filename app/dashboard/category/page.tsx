@@ -6,10 +6,12 @@ import BackButton from "../../components/backButton";
 import CategoryModal from "../../components/CategoryModal";
 import CategoryListSkeleton from "../../components/CategoryListSkeleton";
 import { useCachedFetch } from "../../components/useCachedFetch";
+import { useRouter } from "next/navigation";
 import "../../styles/category.css";
 
 export default function KategorisierungPage() {
   const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
 
   const {
     data: categories,
@@ -109,9 +111,7 @@ export default function KategorisierungPage() {
             <span
               className="category-list-name"
               style={{ cursor: "pointer" }}
-              onClick={() =>
-                window.location.assign(`/dashboard/category/${cat.id}`)
-              }
+              onClick={() => router.push(`/dashboard/category/${cat.id}`)}
             >
               {cat.name}
             </span>
