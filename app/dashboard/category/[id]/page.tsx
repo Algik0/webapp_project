@@ -17,11 +17,27 @@ export default function CategoryDetailPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [categoryAllowed, setCategoryAllowed] = useState<boolean | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryName = searchParams.get("name");
 
   useEffect(() => {
+    // Prüfe, ob die Kategorie dem User gehört
+    fetch(`/api/category?categoryId=${categoryId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) {
+          setCategoryAllowed(false);
+        } else {
+          setCategoryAllowed(true);
+        }
+      })
+      .catch(() => setCategoryAllowed(false));
+  }, [categoryId]);
+
+  useEffect(() => {
+    if (categoryAllowed === false) return;
     fetch(`/api/task?categoryId=${categoryId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -34,7 +50,7 @@ export default function CategoryDetailPage({
         setError(err.message);
         setLoading(false);
       });
-  }, [categoryId]);
+  }, [categoryId, categoryAllowed]);
 
   const handleAddTask = async (name?: string, date?: string) => {
     if (!name || !date) {
@@ -96,6 +112,17 @@ export default function CategoryDetailPage({
       // Fehlerbehandlung optional
     }
   };
+
+  if (categoryAllowed === false) {
+    return (
+      <div className="shared-container">
+        <BackButton />
+        <div className="shared-error" style={{ color: "#fff", marginTop: 32 }}>
+          Keine Berechtigung oder Kategorie nicht gefunden.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="shared-container">
