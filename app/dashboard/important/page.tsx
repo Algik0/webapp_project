@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import "../../styles/important.css";
 import "../../styles/tasks.css";
 import BackButton from "../../components/backButton";
 import { Plus, Trash2 } from "lucide-react";
@@ -139,30 +138,30 @@ export default function WichtigPage() {
   if (error) return <div className="task-container task-error">{error}</div>;
 
   return (
-    <div className="task-container">
-      <div className="task-header">
+    <div className="shared-container">
+      <div className="shared-header">
         <BackButton />
-        <h1 className="task-title">Wichtig</h1>
+        <h1 className="shared-title">Wichtig</h1>
       </div>
-      <ul className="task-list">
+      <ul className="shared-list">
         {(tasks || []).map((task) => (
           <li
             key={task.TaskID}
-            className={`task-list-item${task.Checked ? " task-list-done" : ""}`}
+            className={`shared-list-item${task.Checked ? " shared-list-done" : ""}`}
             onClick={() => handleToggleChecked(task.TaskID, task.Checked)}
             style={{ fontWeight: task.Important ? "bold" : "normal" }}
           >
-            <span className="task-list-name">{task.Name}</span>
-            <div className="task-actions">
+            <span className="shared-list-name">{task.Name}</span>
+            <div className="shared-actions">
               <button
-                className="task-important"
+                className="shared-important"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleToggleImportant(task.TaskID, task.Important);
                 }}
               >
                 <Star
-                  className="task-important-icon"
+                  className="shared-important-icon"
                   fill={task.Important ? "#de3163" : "none"}
                   stroke="#de3163"
                   width={16}
@@ -170,19 +169,19 @@ export default function WichtigPage() {
                 />
               </button>
               <button
-                className="task-delete"
+                className="shared-delete"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteTask(task.TaskID);
                 }}
               >
-                <Trash2 className="task-delete-icon" width={16} height={16} />
+                <Trash2 className="shared-delete-icon" width={16} height={16} />
               </button>
             </div>
           </li>
         ))}
       </ul>
-      <button onClick={handleAddTask} className="task-add-button">
+      <button onClick={handleAddTask} className="shared-add-button">
         <Plus className="important-add-icon" /> Hinzufügen
       </button>
       <TaskModal

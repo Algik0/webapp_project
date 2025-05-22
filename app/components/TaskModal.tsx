@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/welcomepage.css";
+import "../styles/tasks.css";
 
 interface TaskModalProps {
   open: boolean;

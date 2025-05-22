@@ -1,13 +1,12 @@
 "use client";
 
 import "../styles/dashboard.css";
-import BottomTabBar from "./bottomtabbar";
+import BottomTabBar from "../components/BottomTabBar";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Star, BookOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import Calendar from "../components/Calendar";
 import { useCachedFetch } from "../components/useCachedFetch";
-import Link from "next/link";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -95,24 +94,21 @@ export default function Dashboard() {
           className="dashboard-button"
         >
           <BookOpen className="dashboard-icon" />
-          <span className="dashboard-button-text">Kategorisierung</span>
+          <span className="dashboard-button-text">Kategorien</span>
         </button>
 
-        <Link href="/dashboard/weather">
-          <button
-            className="dashboard-button"
-            style={{ justifyContent: "flex-start" }}
-          >
-            <span className="dashboard-icon" role="img" aria-label="Wetter">
-              🌤️
-            </span>
-            <span className="dashboard-button-text">Wetter & Spruch</span>
-          </button>
-        </Link>
+        <button
+          onClick={() => router.push("/dashboard/weather")}
+          className="dashboard-button"
+          style={{ justifyContent: "flex-start" }}
+        >
+          <span className="dashboard-icon" role="img" aria-label="Wetter">
+            🌤️
+          </span>
+          <span className="dashboard-button-text">Wetter & Spruch</span>
+        </button>
       </div>
-      <div className="dashboard-bottom">
-        <BottomTabBar onCalendarClick={() => setShowCalendar(true)} />
-      </div>
+      <BottomTabBar onCalendarClick={() => setShowCalendar(true)} />
       {showCalendar && (
         <div className="calendar-modal-overlay">
           <div className="calendar-modal-window">

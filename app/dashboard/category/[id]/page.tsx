@@ -1,20 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Star } from "lucide-react";
 import BackButton from "../../../components/backButton";
+import TaskModal from "../../../components/TaskModal";
 import { useRouter, useSearchParams } from "next/navigation";
+import "../../../styles/tasks.css";
+import React from "react";
 
 export default function CategoryDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id: categoryId } = React.use(params);
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [newTask, setNewTask] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
-  const categoryId = params.id;
+  const searchParams = useSearchParams();
+  const categoryName = searchParams.get("name");
 
   useEffect(() => {
     fetch(`/api/task?categoryId=${categoryId}`)
@@ -31,63 +36,120 @@ export default function CategoryDetailPage({
       });
   }, [categoryId]);
 
-  const handleAddTask = async () => {
-    if (!newTask.trim()) return;
+  const handleAddTask = async (name?: string, date?: string) => {
+    if (!name || !date) {
+      setModalOpen(true);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newTask.trim(), categoryId }),
+        body: JSON.stringify({ name: name.trim(), date, categoryId }),
       });
       const data = await res.json();
       if (!data.success)
         throw new Error(data.message || "Fehler beim Hinzufügen des Tasks");
       setTasks((prev) => [...prev, data.task]);
-      setNewTask("");
+      setModalOpen(false);
     } catch (err: any) {
       setError(err.message);
     }
     setLoading(false);
   };
 
+  const handleDeleteTask = async (taskId: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/task?taskId=${taskId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!data.success)
+        throw new Error(data.message || "Fehler beim Löschen des Tasks");
+      setTasks((prev) => prev.filter((task) => task.TaskID !== taskId));
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleToggleImportant = async (
+    taskId: number,
+    important: boolean | undefined
+  ) => {
+    try {
+      setTasks((prev) =>
+        prev
+          ? prev.map((task) =>
+              task.TaskID === taskId ? { ...task, Important: !important } : task
+            )
+          : []
+      );
+      await fetch("/api/task", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId, important: !important }),
+      });
+    } catch (err) {
+      // Fehlerbehandlung optional
+    }
+  };
+
   return (
-    <div className="category-container">
-      <div className="category-header">
+    <div className="shared-container">
+      <div className="shared-header" style={{ justifyContent: "space-between" }}>
         <BackButton />
-        <h1 className="category-title">Kategorie: {categoryId}</h1>
+        <span className="shared-title">
+          Kategorie: {categoryName || `Kategorie ${categoryId}`}
+        </span>
       </div>
       {loading ? (
-        <div>Tasks werden geladen...</div>
+        <div className="shared-loading">Tasks werden geladen...</div>
       ) : error ? (
-        <div style={{ color: "red" }}>{error}</div>
+        <div className="shared-error" style={{ color: "#fff" }}>{error}</div>
       ) : (
-        <>
-          <div className="category-task-list">
-            {tasks.map((task) => (
-              <div key={task.TaskID} className="category-task-item">
-                <span>{task.Name}</span>
+        <ul className="shared-list">
+          {tasks.map((task) => (
+            <li key={task.TaskID} className="shared-list-item">
+              <span className="shared-list-name">{task.Name}</span>
+              <div className="shared-actions">
+                <button
+                  className="shared-important"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleImportant(task.TaskID, task.Important);
+                  }}
+                >
+                  <Star
+                    className="shared-important-icon"
+                    fill={task.Important ? "#de3163" : "none"}
+                    stroke="#de3163"
+                    width={16}
+                    height={16}
+                  />
+                </button>
+                <button
+                  className="shared-delete"
+                  onClick={() => handleDeleteTask(task.TaskID)}
+                >
+                  <Trash2 className="shared-delete-icon" />
+                </button>
               </div>
-            ))}
-          </div>
-          <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-            <input
-              value={newTask}
-              onChange={(e) => setNewTask(e.target.value)}
-              placeholder="Neuen Task hinzufügen..."
-              style={{
-                flex: 1,
-                padding: 8,
-                borderRadius: 4,
-                border: "1px solid #ccc",
-              }}
-            />
-            <button onClick={handleAddTask} className="category-add-button">
-              <Plus className="category-add-icon" />
-            </button>
-          </div>
-        </>
+            </li>
+          ))}
+        </ul>
       )}
+      <button onClick={() => setModalOpen(true)} className="shared-add-button">
+        <Plus className="myday-add-icon" /> Hinzufügen
+      </button>
+      <TaskModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleAddTask}
+        title="Task zur Kategorie hinzufügen"
+      />
     </div>
   );
 }

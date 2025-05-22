@@ -25,11 +25,13 @@ export async function GET(request: Request) {
       );
     }
 
-    // Hole alle Kategorien für den Benutzer
+    // Hole alle Kategorien für den Benutzer, inkl. Task-Anzahl
     const categories = await sql`
-      SELECT "CategoryID", "Name"
-      FROM "WebApp"."Category"
-      WHERE "UserID" = ${userId}
+      SELECT c."CategoryID", c."Name", COUNT(t."TaskID") AS "TaskCount"
+      FROM "WebApp"."Category" c
+      LEFT JOIN "WebApp"."Task" t ON t."CategoryID" = c."CategoryID"
+      WHERE c."UserID" = ${userId}
+      GROUP BY c."CategoryID", c."Name"
     `;
 
     return NextResponse.json({ success: true, categories });
