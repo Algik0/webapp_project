@@ -214,46 +214,25 @@ export default function Weather() {
   }, [apiUrl]);
 
   return (
-    <div
-      style={{
-        fontFamily: "Arial, sans-serif",
-        margin: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <div className="weather-container">
       <h1>Aktuelles Wetter</h1>
+
       {error ? (
         <p>{error}</p>
       ) : weather ? (
-        <div
-          id="weather"
-          style={{ marginTop: "1rem", lineHeight: "1.6", textAlign: "center" }}
-        >
+        <div className="weather-content">
           <p>
-            <strong></strong> {weather.location.name},{" "}
-            {weather.location.country}
+            {weather.location.name}, {weather.location.country}
           </p>
+          <p>{weather.location.localtime}</p>
           <p>
-            <strong></strong> {weather.location.localtime}
-          </p>
-          <p>
-            <strong></strong> {weather.current.temp_c}°C
-          </p>
-          <p>
+            {weather.current.temp_c}°C{" "}
             <img
               src={`https:${weather.current.condition.icon}`}
               alt={weather.current.condition.text}
             />
           </p>
-          <div
-            id="quote"
-            style={{ marginTop: "1.5rem", fontStyle: "italic", color: "#fff" }}
-          >
-            💬 {quote}
-          </div>
+          <div className="quote">💬 {quote}</div>
         </div>
       ) : (
         <p>Wetterdaten werden geladen...</p>
