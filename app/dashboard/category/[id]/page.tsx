@@ -21,7 +21,7 @@ export default function CategoryDetailPage({
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryName = searchParams.get("name");
-
+    
   useEffect(() => {
     // Prüfe, ob die Kategorie dem User gehört
     fetch(`/api/category?categoryId=${categoryId}`)
