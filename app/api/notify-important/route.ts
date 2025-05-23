@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       FROM "WebApp"."User" u
       JOIN "WebApp"."Task" t ON u."UserID" = t."UserID"
       WHERE t."Important" = true
-        AND t."Done" = false
+        AND t."Checked" = false
         AND t."Date" <= CURRENT_DATE + INTERVAL '1 day'
         AND t."Date" >= CURRENT_DATE
     `;
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         SELECT "Name", "Date" FROM "WebApp"."Task"
         WHERE "UserID" = ${user.UserID}
           AND "Important" = true
-          AND "Done" = false
+          AND "Checked" = false
           AND "Date" <= CURRENT_DATE + INTERVAL '1 day'
           AND "Date" >= CURRENT_DATE
       `;
