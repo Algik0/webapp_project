@@ -1,3 +1,5 @@
+// CategoryDetailPage: Zeigt alle Tasks einer Kategorie, erlaubt Hinzufügen/Löschen/Markieren
+// Prüft Zugriffsrechte und lädt Tasks per API
 "use client";
 import { useEffect, useState } from "react";
 import { Trash2, Plus, Star } from "lucide-react";
@@ -12,15 +14,15 @@ export default function CategoryDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id: categoryId } = React.use(params);
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [categoryAllowed, setCategoryAllowed] = useState<boolean | null>(null);
+  const { id: categoryId } = React.use(params); // Kategorie-ID aus Params
+  const [tasks, setTasks] = useState<any[]>([]); // Tasks der Kategorie
+  const [loading, setLoading] = useState(true); // Ladezustand
+  const [error, setError] = useState(""); // Fehleranzeige
+  const [modalOpen, setModalOpen] = useState(false); // Task-Modal sichtbar?
+  const [categoryAllowed, setCategoryAllowed] = useState<boolean | null>(null); // Zugriff erlaubt?
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryName = searchParams.get("name");
+  const categoryName = searchParams.get("name"); // Anzeigename
     
   useEffect(() => {
     // Prüfe, ob die Kategorie dem User gehört

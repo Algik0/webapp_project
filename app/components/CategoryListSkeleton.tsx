@@ -1,3 +1,5 @@
+// CategoryListSkeleton: Platzhalter/Skeleton für die Kategorieliste
+// Wird angezeigt, solange Kategorien geladen werden
 import React from "react";
 
 export default function CategoryListSkeleton() {

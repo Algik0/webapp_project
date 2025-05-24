@@ -1,13 +1,14 @@
+// Modal-Komponente zum Hinzufügen/Bearbeiten eines Tasks
 import React, { useState } from "react";
 import "../styles/welcomepage.css";
 import "../styles/tasks.css";
 
 interface TaskModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (name: string, date?: string) => void;
-  title?: string;
-  hideDateField?: boolean;
+  open: boolean; // Modal sichtbar?
+  onClose: () => void; // Schließen-Handler
+  onSubmit: (name: string, date?: string) => void; // Callback für Speichern
+  title?: string; // Überschrift
+  hideDateField?: boolean; // Soll das Datumsfeld ausgeblendet werden?
 }
 
 export default function TaskModal({
@@ -17,12 +18,13 @@ export default function TaskModal({
   title,
   hideDateField,
 }: TaskModalProps) {
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState(""); // Taskname
+  const [date, setDate] = useState(""); // Datum
+  const [error, setError] = useState(""); // Fehleranzeige
 
-  if (!open) return null;
+  if (!open) return null; // Modal nur anzeigen, wenn open=true
 
+  // Beim Absenden: Validierung und Callback
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || (!hideDateField && !date)) {
@@ -39,6 +41,7 @@ export default function TaskModal({
     setDate("");
   };
 
+  // Das eigentliche Modal-Formular
   return (
     <div className="modal-overlay">
       <div className="modal-container">
@@ -52,7 +55,9 @@ export default function TaskModal({
             onChange={(e) => setName(e.target.value)}
             placeholder="Taskname"
             autoFocus
+            required
           />
+          {/* Optionales Datumsfeld */}
           {!hideDateField && (
             <>
               <label className="modal-label">Datum</label>
@@ -61,16 +66,20 @@ export default function TaskModal({
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                required
               />
             </>
           )}
+          {/* Fehleranzeige */}
           {error && <div className="modal-error">{error}</div>}
-          <button className="modal-submit" type="submit">
-            Hinzufügen
-          </button>
-          <button className="modal-cancel" type="button" onClick={onClose}>
-            Abbrechen
-          </button>
+          <div className="modal-actions">
+            <button type="submit" className="modal-save">
+              Speichern
+            </button>
+            <button type="button" className="modal-cancel" onClick={onClose}>
+              Abbrechen
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -1,3 +1,5 @@
+// WichtigPage: Zeigt alle wichtigen Tasks des Nutzers, erlaubt Markieren/Löschen/Hinzufügen
+// Nutzt TaskModal und TaskListSkeleton für UX
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,8 +19,9 @@ interface Task {
 }
 
 export default function WichtigPage() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // Modal für neuen Task
 
+  // Holt wichtige Tasks aus der API (mit Caching)
   const {
     data: tasks,
     loading,
@@ -37,6 +40,7 @@ export default function WichtigPage() {
     { refreshOnFocus: true }
   );
 
+  // Funktion zum Umschalten des "Checked"-Status einer Aufgabe
   const handleToggleChecked = async (taskId: number, checked: boolean) => {
     try {
       setTasks((prev) =>
@@ -62,6 +66,7 @@ export default function WichtigPage() {
     }
   };
 
+  // Funktion zum Umschalten der Wichtigkeit einer Aufgabe
   const handleToggleImportant = async (taskId: number, important: boolean) => {
     try {
       if (important) {
@@ -93,10 +98,12 @@ export default function WichtigPage() {
     }
   };
 
+  // Öffnet das Modal zum Hinzufügen eines neuen Tasks
   const handleAddTask = () => {
     setModalOpen(true);
   };
 
+  // Funktion zum Hinzufügen eines neuen Tasks über das Modal
   const handleModalSubmit = async (name: string, date?: string) => {
     try {
       const response = await fetch("/api/task", {
@@ -116,6 +123,7 @@ export default function WichtigPage() {
     }
   };
 
+  // Funktion zum Löschen einer Aufgabe
   const handleDeleteTask = async (taskId: number) => {
     try {
       const response = await fetch(`/api/task?taskId=${taskId}`, {
@@ -134,7 +142,9 @@ export default function WichtigPage() {
     }
   };
 
+  // Ladeanzeige während der Datenbeschaffung
   if (loading) return <TaskListSkeleton />;
+  // Fehleranzeige bei Fehlern
   if (error) return <div className="task-container task-error">{error}</div>;
 
   return (

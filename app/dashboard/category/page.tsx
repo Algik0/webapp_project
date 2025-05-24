@@ -1,3 +1,5 @@
+// KategorisierungPage: Zeigt alle Kategorien des Nutzers und ermöglicht das Hinzufügen/Löschen
+// Nutzt CategoryModal und CategoryListSkeleton für UI/UX
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,9 +11,10 @@ import { useCachedFetch } from "../../components/useCachedFetch";
 import { useRouter } from "next/navigation";
 
 export default function KategorisierungPage() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // Modal für neue Kategorie
   const router = useRouter();
 
+  // Holt Kategorien aus der API (mit Caching)
   const {
     data: categories,
     loading,
@@ -36,6 +39,7 @@ export default function KategorisierungPage() {
     { refreshOnFocus: true }
   );
 
+  // Löscht eine Kategorie per API
   const deleteCategory = async (id: number) => {
     try {
       const response = await fetch(`/api/category?categoryId=${id}`, {
@@ -50,8 +54,7 @@ export default function KategorisierungPage() {
         alert(data.message || "Fehler beim Löschen der Kategorie");
       }
     } catch (err) {
-      console.error("Fehler beim Löschen der Kategorie:", err);
-      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+      alert("Fehler beim Löschen der Kategorie");
     }
   };
 

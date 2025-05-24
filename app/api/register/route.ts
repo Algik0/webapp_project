@@ -1,3 +1,4 @@
+// API-Route für Registrierung: Legt neuen User mit gehashtem Passwort an
 import { NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
 import crypto from "crypto";

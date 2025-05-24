@@ -1,3 +1,5 @@
+// Kalender-Komponente: Zeigt Aufgaben im Wochen- oder Monatsüberblick
+// Enthält Navigation, Task-Interaktion und lokale UI-Logik
 import { useState, useRef, useEffect } from "react";
 import {
   ChevronLeft,
@@ -7,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 
+// Hilfsfunktion: Erster Tag der Woche (Montag)
 function getMonday(d: Date) {
   const date = new Date(d);
   const day = date.getDay();
@@ -14,6 +17,7 @@ function getMonday(d: Date) {
   return new Date(date.setDate(diff));
 }
 
+// Hilfsfunktion: Kalenderwoche berechnen
 function getWeekNumber(d: Date) {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   const dayNum = date.getUTCDay() || 7;
@@ -25,6 +29,7 @@ function getWeekNumber(d: Date) {
 export type CalendarView = "week" | "month";
 
 export interface CalendarProps {
+  // Aufgaben gruppiert nach Datum
   tasksByDate: Record<
     string,
     {
@@ -38,20 +43,21 @@ export interface CalendarProps {
 }
 
 export default function Calendar({ tasksByDate }: CalendarProps) {
-  const [view, setView] = useState<CalendarView>("week");
-  const [current, setCurrent] = useState(new Date());
+  const [view, setView] = useState<CalendarView>("week"); // Ansicht: Woche/Monat
+  const [current, setCurrent] = useState(new Date()); // Aktuelles Datum
   const [localTaskState, setLocalTaskState] = useState<
     Record<number, { Checked: boolean; Important?: boolean; deleted?: boolean }>
-  >({});
-  const [error, setError] = useState<string | null>(null);
+  >({}); // Lokaler Zustand für Tasks (z.B. checked, wichtig, gelöscht)
+  const [error, setError] = useState<string | null>(null); // Fehleranzeige
 
-  // Scroll-Handling für Task-Icons
+  // Scroll-Handling für Task-Icons (Animationen)
   const taskRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [scrollingTasks, setScrollingTasks] = useState<Record<number, boolean>>(
     {}
   );
 
   useEffect(() => {
+    // Fügt Scroll-Listener zu jedem Task hinzu
     Object.entries(taskRefs.current).forEach(([taskId, el]) => {
       if (!el) return;
       let timeout: any;
@@ -67,7 +73,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
     });
   }, [tasksByDate, view, current]);
 
-  // Handler für Task-Interaktion
+  // Handler für Task-Checkbox (erledigt/unerledigt)
   const handleToggleChecked = async (task: any) => {
     const newChecked = !(localTaskState[task.TaskID]?.Checked ?? task.Checked);
     setLocalTaskState((prev) => ({
@@ -89,6 +95,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
       setTimeout(() => setError(null), 3000);
     }
   };
+  // Handler für Task-Wichtigkeit (Stern)
   const handleToggleImportant = async (task: any) => {
     const newImportant = !(
       localTaskState[task.TaskID]?.Important ?? task.Important
@@ -114,6 +121,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
       setTimeout(() => setError(null), 3000);
     }
   };
+  // Handler für Task-Löschen
   const handleDeleteTask = async (task: any) => {
     setLocalTaskState((prev) => ({
       ...prev,
@@ -134,7 +142,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
     }
   };
 
-  // Woche berechnen
+  // Woche berechnen (Mo-So)
   const monday = getMonday(current);
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday);
@@ -142,7 +150,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
     return d;
   });
 
-  // Monat berechnen
+  // Monat berechnen (alle Tage)
   const firstDay = new Date(current.getFullYear(), current.getMonth(), 1);
   const lastDay = new Date(current.getFullYear(), current.getMonth() + 1, 0);
   const monthDays = Array.from({ length: lastDay.getDate() }, (_, i) => {
@@ -151,7 +159,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
     return d;
   });
 
-  // Navigation
+  // Navigation: Vor/Zurück (Woche/Monat)
   const prev = () => {
     if (view === "week") {
       const d = new Date(current);
@@ -171,10 +179,10 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
     }
   };
 
-  // Kalenderwoche
+  // Kalenderwoche für Anzeige
   const weekNumber = getWeekNumber(monday);
 
-  // In der Monats- und Wochenansicht: Datumsschlüssel immer als lokales Datum (deutsche Zeitzone) erzeugen
+  // Hilfsfunktion: Datumsschlüssel für Aufgaben (lokale Zeitzone)
   const getDateKey = (date: Date) => {
     // Lokale Zeit, aber mit expliziter Zeitzone für Deutschland
     const tzDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -184,6 +192,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
     return `${year}-${month}-${day}`;
   };
 
+  // Render: Kalender-Widget mit Aufgaben, Navigation und Fehleranzeige
   return (
     <div className="calendar-widget">
       {error && (

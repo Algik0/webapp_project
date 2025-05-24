@@ -1,26 +1,29 @@
+// Login-Komponente: Zeigt das Login-Formular und behandelt die Anmeldung
 "use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface LoginProps {
-  onSwitch: () => void;
-  onLoginSuccess: () => void; // Neue Prop
+  onSwitch: () => void; // Callback für Wechsel zu Registrierung
+  onLoginSuccess: () => void; // Callback bei erfolgreichem Login
 }
 
 export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loginError, setLoginError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>(""); // E-Mail-Feld
+  const [password, setPassword] = useState<string>(""); // Passwort-Feld
+  const [loginError, setLoginError] = useState<string>(""); // Fehleranzeige
+  const [loading, setLoading] = useState<boolean>(false); // Ladeanzeige
 
+  // Wird beim Absenden des Login-Formulars aufgerufen
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoginError("");
     setLoading(true);
 
     try {
+      // Anfrage an die Login-API
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -30,8 +33,8 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        onLoginSuccess(); // Aufruf der neuen Prop
-        router.push("../dashboard"); // Weiterleitung zur Dashboard-Seite
+        onLoginSuccess(); // Bei Erfolg Callback ausführen
+        router.push("../dashboard"); // Weiterleitung zum Dashboard
       } else {
         setLoginError(data.message || "Login fehlgeschlagen");
       }
@@ -43,8 +46,10 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
     }
   }
 
+  // Das eigentliche Formular
   return (
     <form onSubmit={handleLogin} className="w-full max-w-md space-y-4">
+      {/* Eingabefeld für E-Mail */}
       <input
         type="text"
         value={email}
@@ -53,6 +58,7 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
         className="w-full p-2 border rounded"
         required
       />
+      {/* Eingabefeld für Passwort */}
       <input
         type="password"
         value={password}
@@ -62,8 +68,10 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
         required
       />
 
+      {/* Fehleranzeige */}
       {loginError && <p className="text-red-500">{loginError}</p>}
 
+      {/* Login-Button */}
       <button
         type="submit"
         className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50"
@@ -72,6 +80,7 @@ export default function Login({ onSwitch, onLoginSuccess }: LoginProps) {
         {loading ? "Lädt…" : "Login"}
       </button>
 
+      {/* Button zum Wechsel zur Registrierung */}
       <button
         type="button"
         onClick={onSwitch}

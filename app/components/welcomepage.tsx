@@ -1,3 +1,4 @@
+// Komponente für die Willkommensseite mit Login/Registrierung
 import React from "react";
 import Login from "./login";
 import Register from "./register";
@@ -5,30 +6,33 @@ import { useState } from "react";
 import "../styles/welcomepage.css";
 
 export default function Home() {
-  const [isRegistering, setIsRegistering] = useState(false); // Zustand für den Registrierungsstatu
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Zustand für den Login-Status
+  const [isRegistering, setIsRegistering] = useState(false); // true = Registrierungsformular anzeigen
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // true = User ist eingeloggt
 
   return (
     <div>
       <div className="banner">
         <div className="login-box">
+          {/* Zeigt je nach Zustand Login oder Registrierung */}
           {isRegistering ? (
             <Register onSwitch={() => setIsRegistering(false)} />
           ) : (
             <button>
               <Login
-                onSwitch={() => setIsRegistering(true)} // Callback für den Wechsel zur Registrierung
-                onLoginSuccess={() => setIsLoggedIn(true)} // Callback für den erfolgreichen Login
+                onSwitch={() => setIsRegistering(true)} // Wechsel zu Registrierung
+                onLoginSuccess={() => setIsLoggedIn(true)} // Nach Login
               />
             </button>
           )}
         </div>
       </div>
 
+      {/* Slogan */}
       <div className="slogan">
         Der Studienplaner von Studenten für Studenten
       </div>
 
+      {/* Vorteile/Fakten */}
       <div className="hardfacts-container">
         <div className="fact-box">📘 Dein Planer perfekt für die Uni</div>
         <div className="fact-box">

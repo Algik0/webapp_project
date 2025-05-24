@@ -1,3 +1,4 @@
+// Hauptseite: Zeigt Willkommensbereich, Vorteile und Login/Register-Modal
 "use client";
 
 import { useState } from "react";
@@ -9,25 +10,30 @@ import taskademiaLogo from "./images/taskademia.png";
 import "./styles/welcomepage.css";
 
 export default function Home() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  // State für Login- und Register-Modal
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); // Login-Modal sichtbar?
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // Register-Modal sichtbar?
 
-  //Wenn Benutzer nicht angemeldet ist, wird die Willkommensseite angezeigt
+  // Wenn nicht eingeloggt, Willkommensseite anzeigen
   return (
     <div>
+      {/* Banner mit Logo und Login-Button */}
       <div className="banner">
         <Image src={taskademiaLogo} alt="Taskademia Logo" />
         <div className="login-box">
+          {/* Öffnet Login-Modal */}
           <button onClick={() => setIsLoginModalOpen(true)}>
             Login | Sign Up
           </button>
         </div>
       </div>
 
+      {/* Slogan */}
       <div className="slogan">
         Der Studienplaner von Studenten für Studenten
       </div>
 
+      {/* Vorteile/Fakten */}
       <div className="hardfacts-container">
         <div className="fact-box">📘 Dein Planer perfekt für die Uni</div>
         <div className="fact-box">
@@ -56,6 +62,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Login-Modal */}
       {isLoginModalOpen && (
         <div className="modal">
           <div className="modal-content">
@@ -65,6 +72,7 @@ export default function Home() {
             >
               ✖
             </button>
+            {/* Login-Komponente mit Switch zu Register */}
             <Login
               onSwitch={() => {
                 setIsLoginModalOpen(false);
@@ -78,6 +86,7 @@ export default function Home() {
         </div>
       )}
 
+      {/* Register-Modal */}
       {isRegisterModalOpen && (
         <div className="modal">
           <div className="modal-content">
@@ -87,6 +96,7 @@ export default function Home() {
             >
               ✖
             </button>
+            {/* Register-Komponente mit Switch zu Login */}
             <Register
               onSwitch={() => {
                 setIsRegisterModalOpen(false);

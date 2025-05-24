@@ -1,3 +1,4 @@
+// API-Route für Login: Prüft Benutzer-Credentials und setzt UserID-Cookie
 import { NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
 import crypto from "crypto";
@@ -6,6 +7,7 @@ export async function POST(request: Request) {
   const { email, password } = await request.json();
   const databaseUrl = process.env.DATABASE_URL;
 
+  // Überprüfen, ob die DATABASE_URL gesetzt ist
   if (!databaseUrl) {
     return NextResponse.json(
       { success: false, message: "DATABASE_URL is not set" },
@@ -23,6 +25,7 @@ export async function POST(request: Request) {
       WHERE "Email" = ${email}
     `;
 
+    // Überprüfen, ob der Benutzer in der Datenbank existiert
     if (result.length === 0) {
       return NextResponse.json({
         success: false,
