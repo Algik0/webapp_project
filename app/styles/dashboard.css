@@ -57,6 +57,39 @@ html {
   background-color: #fde68a;
 }
 
+.weather-container {
+  width: 300px;
+  margin: 0.5rem auto;
+  padding: 0.5rem;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+  text-align: center;
+  background: linear-gradient(to bottom left, #de3163, #000000);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.weather-container h1 {
+  font-size: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.weather-content p {
+  margin: 0.2rem 0;
+  line-height: 1.4;
+}
+
+.weather-content img {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.quote {
+  margin-top: 0.5rem;
+  font-style: italic;
+  font-size: 0.875rem;
+}
 .dashboard-icon {
   width: 1.5rem;
   height: 1.5rem;
