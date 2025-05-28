@@ -126,6 +126,46 @@ export default function CategoryDetailPage({
     }
   };
 
+  // Handler zum Umschalten des Checked-Status
+  const handleToggleChecked = async (taskId: number, checked: boolean) => {
+    try {
+      setTasks((prev) =>
+        prev
+          ? prev.map((task) =>
+              task.TaskID === taskId ? { ...task, Checked: !checked } : task
+            )
+          : []
+      );
+      const response = await fetch("/api/task", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId, checked: !checked }),
+      });
+      const data = await response.json();
+      if (!data.success) {
+        // Optional: Task wieder zurücksetzen
+        setTasks((prev) =>
+          prev
+            ? prev.map((task) =>
+                task.TaskID === taskId ? { ...task, Checked: checked } : task
+              )
+            : []
+        );
+        alert(data.message || "Fehler beim Aktualisieren des Tasks");
+      }
+    } catch (err) {
+      // Optional: Task wieder zurücksetzen
+      setTasks((prev) =>
+        prev
+          ? prev.map((task) =>
+              task.TaskID === taskId ? { ...task, Checked: checked } : task
+            )
+          : []
+      );
+      alert("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+    }
+  };
+
   if (categoryAllowed === false) {
     return (
       <div className="shared-container">
@@ -152,7 +192,11 @@ export default function CategoryDetailPage({
       ) : (
         <ul className="shared-list">
           {tasks.map((task) => (
-            <li key={task.TaskID} className="shared-list-item">
+            <li
+              key={task.TaskID}
+              className={`shared-list-item${task.Checked ? " shared-list-done" : ""}`}
+              onClick={() => handleToggleChecked(task.TaskID, task.Checked)}
+            >
               <span className="shared-list-name">{task.Name}</span>
               <div className="shared-actions">
                 {/* Kategorie-Icon (Folder) */}
