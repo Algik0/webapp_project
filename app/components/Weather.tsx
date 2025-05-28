@@ -252,7 +252,7 @@ export default function Weather() {
           </p>
           <div className="quote">💬 {quote}</div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
