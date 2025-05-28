@@ -1,3 +1,4 @@
+// API-Route für Kategorien: Holt, erstellt, löscht Kategorien für den eingeloggten User
 import { NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
 

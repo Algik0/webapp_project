@@ -1,3 +1,4 @@
+// Dashboard-Seite: Übersicht, Logout, Kalender, Wetter und Navigation
 "use client";
 
 import "../styles/dashboard.css";
@@ -11,16 +12,16 @@ import Weather from "../components/Weather";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [showWeather, setShowWeather] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false); // Kalender-Overlay sichtbar?
+  const [showWeather, setShowWeather] = useState(false); // Wetter-Widget sichtbar?
 
+  // Logout-Handler: Löscht Cookie und leitet zur Startseite
   const handleLogout = async () => {
-    // Serverseitiges Logout: Cookie löschen
     await fetch("/api/logout", { method: "POST" });
     router.push("/");
   };
 
-  // Kalender-Tasks laden
+  // Holt alle Tasks für den Kalender (mit Caching)
   const {
     data: tasks,
     loading,
@@ -36,6 +37,7 @@ export default function Dashboard() {
     },
     { refreshOnFocus: true }
   );
+  // Gruppiert Tasks nach Datum
   const tasksByDate: Record<string, any[]> = {};
   (tasks || []).forEach((task) => {
     if (task.Date) {
@@ -45,7 +47,7 @@ export default function Dashboard() {
     }
   });
 
-  // Kalender-Overlay-Logik
+  // Overlay-Logik für Kalender (schließt bei Navigation)
   useEffect(() => {
     // Overlay nur anzeigen, wenn explizit showCalendar true ist
     if (!showCalendar) return;
@@ -97,18 +99,6 @@ export default function Dashboard() {
         <button
           onClick={() => setShowWeather((prev) => !prev)}
           className="dashboard-button"
-          style={{
-            justifyContent: "flex-start",
-            background: "#fff",
-            border: "2px solid #e0e0e0",
-            color: "#222",
-            boxShadow: "0 2px 8px #0001",
-            fontWeight: 500,
-            marginBottom: showWeather ? 0 : "1.5rem",
-            borderRadius: "12px 12px 0 0",
-            zIndex: 2,
-            position: "relative"
-          }}
         >
           <span className="dashboard-icon" role="img" aria-label="Wetter">
             🌤️
@@ -116,36 +106,16 @@ export default function Dashboard() {
           <span className="dashboard-button-text">Wetter & Spruch</span>
         </button>
         {showWeather && (
-          <div
-            style={{
-              width: "100%",
-              background: "#fff",
-              borderRadius: "0 0 16px 16px",
-              boxShadow: "0 2px 12px #0003",
-              padding: "0.7rem",
-              marginBottom: "1.2rem",
-              marginTop: 0,
-              border: "2px solid #e0e0e0",
-              borderTop: "none",
-              zIndex: 1,
-              position: "relative",
-              maxHeight: "320px",
-              overflowY: "auto",
-              fontSize: "0.95rem",
-              color: "#c0392b", // gesamter Text rot
-              fontWeight: 500
-            }}
-          >
+          <div>
             <Weather />
             <div
               style={{
                 color: "#fff",
                 fontWeight: 400,
                 fontSize: "0.98rem",
-                marginTop: "0.7rem"
+                marginTop: "0.7rem",
               }}
             >
-              Die Sonne motiviert – auch zum Lernen.
             </div>
           </div>
         )}

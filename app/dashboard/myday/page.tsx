@@ -1,3 +1,5 @@
+// MeinTagPage: Zeigt alle heutigen Tasks des Nutzers, erlaubt Markieren/Löschen/Hinzufügen
+// Nutzt TaskModal und TaskListSkeleton für UX
 "use client";
 
 import { useState } from "react";
@@ -17,6 +19,7 @@ interface Task {
 }
 
 export default function MeinTagPage() {
+  // Holt heutige Tasks aus der API (mit Caching)
   const {
     data: tasks,
     loading,
@@ -35,6 +38,7 @@ export default function MeinTagPage() {
     { refreshOnFocus: true }
   );
 
+  // Funktion zum Umschalten des "Checked"-Status einer Aufgabe
   const handleToggleChecked = async (taskId: number, checked: boolean) => {
     try {
       setTasks((prev) =>
@@ -60,6 +64,7 @@ export default function MeinTagPage() {
     }
   };
 
+  // Funktion zum Umschalten des "Important"-Status einer Aufgabe
   const handleToggleImportant = async (
     taskId: number,
     important: boolean | undefined
@@ -86,13 +91,15 @@ export default function MeinTagPage() {
     }
   };
 
+  // Öffnet das Modal zum Hinzufügen einer neuen Aufgabe
   const handleAddTask = () => {
     setModalOpen(true);
   };
 
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleModalSubmit = async (name: string) => {
+  // Funktion zum Absenden des neuen Tasks über das Modal
+  const handleModalSubmit = async (name: string, _date?: string, categoryId?: number) => {
     // Lokales Datum (nicht UTC!)
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
@@ -101,7 +108,7 @@ export default function MeinTagPage() {
       const response = await fetch("/api/task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, date: today }),
+        body: JSON.stringify({ name, date: today, categoryId }),
       });
       const data = await response.json();
       if (data.success && data.task) {
@@ -115,6 +122,7 @@ export default function MeinTagPage() {
     }
   };
 
+  // Funktion zum Löschen einer Aufgabe
   const handleDeleteTask = async (taskId: number) => {
     try {
       const response = await fetch(`/api/task?taskId=${taskId}`, {
@@ -133,7 +141,9 @@ export default function MeinTagPage() {
     }
   };
 
+  // Laden-Skelett anzeigen, während die Daten geladen werden
   if (loading) return <TaskListSkeleton />;
+  // Fehleranzeige, falls beim Laden ein Fehler aufgetreten ist
   if (error) return <div className="task-container task-error">{error}</div>;
 
   return (

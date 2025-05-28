@@ -1,3 +1,5 @@
+// WichtigPage: Zeigt alle wichtigen Tasks des Nutzers, erlaubt Markieren/Löschen/Hinzufügen
+// Nutzt TaskModal und TaskListSkeleton für UX
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,17 +10,21 @@ import TaskModal from "../../components/TaskModal";
 import { Star } from "lucide-react";
 import TaskListSkeleton from "../../components/TaskListSkeleton";
 import { useCachedFetch } from "../../components/useCachedFetch";
+import { Folder } from "lucide-react";
 
 interface Task {
   TaskID: number;
   Name: string;
   Checked: boolean;
   Important: boolean;
+  CategoryID?: number;
 }
 
 export default function WichtigPage() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // Modal für neuen Task
+  const [categoryDropdownTask, setCategoryDropdownTask] = useState<number | undefined>(undefined);
 
+  // Holt wichtige Tasks aus der API (mit Caching)
   const {
     data: tasks,
     loading,
@@ -37,6 +43,17 @@ export default function WichtigPage() {
     { refreshOnFocus: true }
   );
 
+  const { data: categories } = useCachedFetch<{ id: number; name: string }[]>(
+    "categories",
+    async () => {
+      const res = await fetch("/api/category");
+      const data = await res.json();
+      if (!data.success) return [];
+      return data.categories.map((cat: any) => ({ id: cat.CategoryID, name: cat.Name }));
+    }
+  );
+
+  // Funktion zum Umschalten des "Checked"-Status einer Aufgabe
   const handleToggleChecked = async (taskId: number, checked: boolean) => {
     try {
       setTasks((prev) =>
@@ -62,6 +79,7 @@ export default function WichtigPage() {
     }
   };
 
+  // Funktion zum Umschalten der Wichtigkeit einer Aufgabe
   const handleToggleImportant = async (taskId: number, important: boolean) => {
     try {
       if (important) {
@@ -93,16 +111,18 @@ export default function WichtigPage() {
     }
   };
 
+  // Öffnet das Modal zum Hinzufügen eines neuen Tasks
   const handleAddTask = () => {
     setModalOpen(true);
   };
 
-  const handleModalSubmit = async (name: string, date?: string) => {
+  // Funktion zum Hinzufügen eines neuen Tasks über das Modal
+  const handleModalSubmit = async (name: string, date?: string, categoryId?: number) => {
     try {
       const response = await fetch("/api/task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, important: true, date }),
+        body: JSON.stringify({ name, important: true, date, categoryId }),
       });
       const data = await response.json();
       if (data.success && data.task) {
@@ -116,6 +136,7 @@ export default function WichtigPage() {
     }
   };
 
+  // Funktion zum Löschen einer Aufgabe
   const handleDeleteTask = async (taskId: number) => {
     try {
       const response = await fetch(`/api/task?taskId=${taskId}`, {
@@ -134,7 +155,9 @@ export default function WichtigPage() {
     }
   };
 
+  // Ladeanzeige während der Datenbeschaffung
   if (loading) return <TaskListSkeleton />;
+  // Fehleranzeige bei Fehlern
   if (error) return <div className="task-container task-error">{error}</div>;
 
   return (
@@ -168,6 +191,17 @@ export default function WichtigPage() {
                   height={16}
                 />
               </button>
+              {/* Kategorie-Icon */}
+              <button
+                className="shared-category"
+                title="Kategorie ändern"
+                onClick={e => {
+                  e.stopPropagation();
+                  setCategoryDropdownTask(task.TaskID);
+                }}
+              >
+                <Folder className="shared-important-icon" stroke="#222" width={16} height={16} />
+              </button>
               <button
                 className="shared-delete"
                 onClick={(e) => {
@@ -178,6 +212,30 @@ export default function WichtigPage() {
                 <Trash2 className="shared-delete-icon" width={16} height={16} />
               </button>
             </div>
+            {/* Kategorie-Dropdown für diesen Task */}
+            {categoryDropdownTask === task.TaskID && (
+              <select
+                className="modal-input"
+                style={{ position: "absolute", right: 40, top: 30, zIndex: 10, minWidth: 120 }}
+                value={task.CategoryID ?? ""}
+                onChange={async e => {
+                  setCategoryDropdownTask(undefined);
+                  const newCategoryId = e.target.value ? Number(e.target.value) : null;
+                  await fetch("/api/task", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ taskId: task.TaskID, categoryId: newCategoryId }),
+                  });
+                  setTasks(prev => prev ? prev.map(t => t.TaskID === task.TaskID ? { ...t, CategoryID: newCategoryId ?? undefined } : t) : prev);
+                }}
+                onBlur={() => setCategoryDropdownTask(undefined)}
+              >
+                <option value="">Keine Kategorie</option>
+                {categories && categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            )}
           </li>
         ))}
       </ul>

@@ -1,3 +1,5 @@
+// TaskListSkeleton: Platzhalter/Skeleton für die Aufgabenliste
+// Wird angezeigt, solange Tasks geladen werden
 import React from "react";
 import "../styles/tasks.css";
 

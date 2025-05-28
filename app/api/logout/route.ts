@@ -1,3 +1,4 @@
+// API-Route für Logout: Löscht das UserID-Cookie (User wird ausgeloggt)
 import { NextResponse } from "next/server";
 
 export async function POST() {

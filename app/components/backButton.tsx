@@ -1,3 +1,5 @@
+// BackButton-Komponente: Navigiert zur vorherigen Seite im Verlauf
+// Wird z.B. in der Dashboard-Navigation verwendet
 "use client";
 
 import { useRouter } from "next/navigation";

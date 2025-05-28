@@ -1,12 +1,14 @@
+// CategoryModal-Komponente: Modal zum Hinzufügen einer neuen Kategorie
+// Zeigt ein Eingabefeld und validiert den Namen
 import React, { useState } from "react";
 import "../styles/welcomepage.css";
 import "../styles/tasks.css";
 
 interface CategoryModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (name: string) => void;
-  title?: string;
+  open: boolean; // Modal sichtbar?
+  onClose: () => void; // Schließen-Handler
+  onSubmit: (name: string) => void; // Callback für Speichern
+  title?: string; // Überschrift
 }
 
 export default function CategoryModal({
@@ -15,11 +17,12 @@ export default function CategoryModal({
   onSubmit,
   title,
 }: CategoryModalProps) {
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState(""); // Kategoriename
+  const [error, setError] = useState(""); // Fehleranzeige
 
-  if (!open) return null;
+  if (!open) return null; // Modal nur anzeigen, wenn open=true
 
+  // Beim Absenden: Validierung und Callback
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {

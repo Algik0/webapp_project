@@ -1,5 +1,7 @@
+// Wetter-Komponente: Holt Wetterdaten und zeigt ein passendes Zitat an
 import React, { useEffect, useState } from "react";
 
+// Typen für Wetterdaten
 type WeatherData = {
   location: {
     name: string;
@@ -15,6 +17,7 @@ type WeatherData = {
   };
 };
 
+// Zitate je nach Wetterlage
 const weatherQuotes: Record<string, string[]> = {
   sonnig: [
     "Heute brauchst du Sonnencreme statt Sorgen!",
@@ -190,14 +193,16 @@ function randomQuote(category: string): string {
 }
 
 export default function Weather() {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [quote, setQuote] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [weather, setWeather] = useState<WeatherData | null>(null); // Wetterdaten
+  const [loading, setLoading] = useState(true); // Ladezustand
+  const [error, setError] = useState<string | null>(null); // Fehlerzustand
+  const [quote, setQuote] = useState<string>(""); // Motivationsspruch
 
   const apiKey = "9c5b3c9d317e4680871143322250405";
   const city = "Mannheim";
   const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&lang=de`;
 
+  // Hole Wetterdaten beim Laden der Komponente
   useEffect(() => {
     fetch(apiUrl)
       .then((res) => {
@@ -206,58 +211,48 @@ export default function Weather() {
       })
       .then((data) => {
         setWeather(data);
-        setQuote(getFunnyQuote(data.current.condition.text));
+        setLoading(false);
       })
       .catch((err) => {
         setError(err.message);
+        setLoading(false);
       });
   }, [apiUrl]);
 
+  // Wähle ein passendes Zitat, wenn Wetterdaten geladen sind
+  useEffect(() => {
+    if (weather) {
+      setQuote(getFunnyQuote(weather.current.condition.text));
+    }
+  }, [weather]);
+
+  // Zeige Ladezustand, Fehler oder Wetterdaten mit Spruch
+  if (loading) return <div>Wetter wird geladen...</div>;
+  if (error) return <div>Fehler: {error}</div>;
+  if (!weather) return null;
+
   return (
-    <div
-      style={{
-        fontFamily: "Arial, sans-serif",
-        margin: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <div className="weather-container">
       <h1>Aktuelles Wetter</h1>
+
       {error ? (
         <p>{error}</p>
       ) : weather ? (
-        <div
-          id="weather"
-          style={{ marginTop: "1rem", lineHeight: "1.6", textAlign: "center" }}
-        >
+        <div className="weather-content">
           <p>
-            <strong></strong> {weather.location.name},{" "}
-            {weather.location.country}
+            {weather.location.name}, {weather.location.country}
           </p>
+          <p>{weather.location.localtime}</p>
           <p>
-            <strong></strong> {weather.location.localtime}
-          </p>
-          <p>
-            <strong></strong> {weather.current.temp_c}°C
-          </p>
-          <p>
+            {weather.current.temp_c}°C{" "}
             <img
               src={`https:${weather.current.condition.icon}`}
               alt={weather.current.condition.text}
             />
           </p>
-          <div
-            id="quote"
-            style={{ marginTop: "1.5rem", fontStyle: "italic", color: "#fff" }}
-          >
-            💬 {quote}
-          </div>
+          <div className="quote">💬 {quote}</div>
         </div>
-      ) : (
-        <p>Wetterdaten werden geladen...</p>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+// Layout-Komponente: Definiert das Grundgerüst der App (Fonts, Styles, Metadata)
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -22,6 +23,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Setzt globale Schriftarten und umschließt die gesamte App
   return (
     <html lang="en">
       <body

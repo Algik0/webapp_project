@@ -1,3 +1,4 @@
+// API-Route für Tasks: Holt, erstellt, bearbeitet und löscht Aufgaben für den eingeloggten User
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
 
@@ -26,21 +27,25 @@ export async function GET(req: NextRequest) {
   let tasks;
   try {
     if (categoryId) {
+      // Tasks einer bestimmten Kategorie
       tasks = await sql`
         SELECT * FROM "WebApp"."Task"
         WHERE "UserID" = ${userId} AND "CategoryID" = ${categoryId}
       `;
     } else if (important === "true") {
+      // Alle wichtigen Tasks
       tasks = await sql`
         SELECT * FROM "WebApp"."Task"
         WHERE "UserID" = ${userId} AND "Important" = true
       `;
     } else if (myday === "true") {
+      // Alle heutigen Tasks
       tasks = await sql`
         SELECT * FROM "WebApp"."Task"
         WHERE "UserID" = ${userId} AND "Date" = CURRENT_DATE
       `;
     } else {
+      // Alle Tasks des Users
       tasks = await sql`
         SELECT * FROM "WebApp"."Task"
         WHERE "UserID" = ${userId}
