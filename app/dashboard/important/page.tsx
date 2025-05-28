@@ -176,6 +176,18 @@ export default function WichtigPage() {
           >
             <span className="shared-list-name">{task.Name}</span>
             <div className="shared-actions">
+              {/* Kategorie-Icon (Folder) */}
+              <button
+                className="shared-category"
+                title="Kategorie ändern"
+                style={{ marginRight: 2 }}
+                onClick={e => {
+                  e.stopPropagation();
+                  setCategoryDropdownTask(task.TaskID);
+                }}
+              >
+                <Folder className="shared-important-icon" stroke="#222" width={16} height={16} />
+              </button>
               <button
                 className="shared-important"
                 onClick={(e) => {
@@ -190,17 +202,6 @@ export default function WichtigPage() {
                   width={16}
                   height={16}
                 />
-              </button>
-              {/* Kategorie-Icon */}
-              <button
-                className="shared-category"
-                title="Kategorie ändern"
-                onClick={e => {
-                  e.stopPropagation();
-                  setCategoryDropdownTask(task.TaskID);
-                }}
-              >
-                <Folder className="shared-important-icon" stroke="#222" width={16} height={16} />
               </button>
               <button
                 className="shared-delete"
