@@ -1,8 +1,8 @@
 {
-  "cron": [
+  "crons": [
     {
       "path": "/api/notify-important",
-      "schedule": "0 0 * * *"
+      "schedule": "*/15 * * * *"
     }
   ]
 }

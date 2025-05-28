@@ -99,7 +99,7 @@ export default function MeinTagPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   // Funktion zum Absenden des neuen Tasks über das Modal
-  const handleModalSubmit = async (name: string) => {
+  const handleModalSubmit = async (name: string, _date?: string, categoryId?: number) => {
     // Lokales Datum (nicht UTC!)
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
@@ -108,7 +108,7 @@ export default function MeinTagPage() {
       const response = await fetch("/api/task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, date: today }),
+        body: JSON.stringify({ name, date: today, categoryId }),
       });
       const data = await response.json();
       if (data.success && data.task) {
