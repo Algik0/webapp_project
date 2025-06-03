@@ -8,6 +8,7 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import { useCachedFetch } from "./useCachedFetch";
 
 // Hilfsfunktion: Erster Tag der Woche (Montag)
 function getMonday(d: Date) {
@@ -46,7 +47,7 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
   const [view, setView] = useState<CalendarView>("week"); // Ansicht: Woche/Monat
   const [current, setCurrent] = useState(new Date()); // Aktuelles Datum
   const [localTaskState, setLocalTaskState] = useState<
-    Record<number, { Checked: boolean; Important?: boolean; deleted?: boolean }>
+    Record<number, { Checked: boolean; Important?: boolean; deleted?: boolean; categoryId?: number|null }>
   >({});
   const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
@@ -234,6 +235,40 @@ export default function Calendar({ tasksByDate }: CalendarProps) {
 const getDateKeyFromString = (dateString: string) => dateString.slice(0, 10);
 // ergibt "2024-05-26"
 
+  // Kategorie-Auswahl für Tasks im Modal ermöglichen
+  // Kategorien holen
+  const { data: categories } = useCachedFetch<{ id: number; name: string }[]>(
+    "categories",
+    async () => {
+      const res = await fetch("/api/category");
+      const data = await res.json();
+      if (!data.success) return [];
+      return data.categories.map((cat: any) => ({ id: cat.CategoryID, name: cat.Name }));
+    }
+  );
+
+  // Handler für Kategorie-Wechsel
+  const handleChangeCategory = async (task: any, categoryIdRaw: string) => {
+    const categoryId = categoryIdRaw === "" ? null : Number(categoryIdRaw);
+    setLocalTaskState((prev) => ({
+      ...prev,
+      [task.TaskID]: {
+        ...prev[task.TaskID],
+        categoryId,
+      },
+    }));
+    try {
+      await fetch("/api/task", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId: task.TaskID, categoryId }),
+      });
+    } catch {
+      setError("Kategorie konnte nicht geändert werden.");
+      setTimeout(() => setError(null), 3000);
+    }
+  };
+
   // Render: Kalender-Widget mit Aufgaben, Navigation und Fehleranzeige
   return (
     <div className="calendar-widget">
@@ -381,7 +416,7 @@ const getDateKeyFromString = (dateString: string) => dateString.slice(0, 10);
               })}
             </h2>
             <div>
-              {(tasksByDate[getDateKey(selectedDay)] || []).length === 0 ? (
+              {(tasksByDate[getDateKey(selectedDay)] || []).length === 0 && (!addedTasksByDate[getDateKey(selectedDay)] || addedTasksByDate[getDateKey(selectedDay)].length === 0) ? (
                 <div style={{ color: "#888" }}>Keine Tasks für diesen Tag.</div>
               ) : (
                 (() => {
@@ -396,6 +431,7 @@ const getDateKeyFromString = (dateString: string) => dateString.slice(0, 10);
                     const checked = localTaskState[task.TaskID]?.Checked ?? task.Checked;
                     const important = localTaskState[task.TaskID]?.Important ?? task.Important;
                     const deleted = localTaskState[task.TaskID]?.deleted;
+                    const categoryId = localTaskState[task.TaskID]?.categoryId ?? task.CategoryID;
                     if (deleted) return null;
                     return (
                       <div
@@ -422,6 +458,20 @@ const getDateKeyFromString = (dateString: string) => dateString.slice(0, 10);
                         >
                           {task.Name}
                         </span>
+                        {/* Kategorie-Auswahl */}
+                        {categories && (
+                          <select
+                            value={categoryId ?? ""}
+                            onChange={e => handleChangeCategory(task, e.target.value)}
+                            style={{ marginRight: 8, borderRadius: 6, border: "1px solid #ccc", fontSize: 14 }}
+                            title="Kategorie ändern"
+                          >
+                            <option value="">Keine Kategorie</option>
+                            {categories.map((cat: {id: number, name: string}) => (
+                              <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                          </select>
+                        )}
                         <button
                           style={{
                             background: "none",
