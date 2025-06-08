@@ -10,12 +10,14 @@ import TaskModal from "../../components/TaskModal";
 import { Star } from "lucide-react";
 import TaskListSkeleton from "../../components/TaskListSkeleton";
 import { useCachedFetch } from "../../components/useCachedFetch";
+import { Folder } from "lucide-react";
 
 interface Task {
   TaskID: number;
   Name: string;
   Checked: boolean;
   Important?: boolean;
+  CategoryID?: number;
 }
 
 export default function MeinTagPage() {
@@ -99,7 +101,7 @@ export default function MeinTagPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   // Funktion zum Absenden des neuen Tasks über das Modal
-  const handleModalSubmit = async (name: string) => {
+  const handleModalSubmit = async (name: string, _date?: string, categoryId?: number) => {
     // Lokales Datum (nicht UTC!)
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
@@ -108,7 +110,7 @@ export default function MeinTagPage() {
       const response = await fetch("/api/task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, date: today }),
+        body: JSON.stringify({ name, date: today, categoryId }),
       });
       const data = await response.json();
       if (data.success && data.task) {
@@ -141,6 +143,17 @@ export default function MeinTagPage() {
     }
   };
 
+  const [categoryDropdownTask, setCategoryDropdownTask] = useState<number | undefined>(undefined);
+  const { data: categories } = useCachedFetch<{ id: number; name: string }[]>(
+    "categories",
+    async () => {
+      const res = await fetch("/api/category");
+      const data = await res.json();
+      if (!data.success) return [];
+      return data.categories.map((cat: any) => ({ id: cat.CategoryID, name: cat.Name }));
+    }
+  );
+
   // Laden-Skelett anzeigen, während die Daten geladen werden
   if (loading) return <TaskListSkeleton />;
   // Fehleranzeige, falls beim Laden ein Fehler aufgetreten ist
@@ -161,9 +174,21 @@ export default function MeinTagPage() {
           >
             <span className="shared-list-name">{task.Name}</span>
             <div className="shared-actions">
+              {/* Kategorie-Icon (Folder) */}
+              <button
+                className="shared-category"
+                title="Kategorie ändern"
+                style={{ marginRight: 2 }}
+                onClick={e => {
+                  e.stopPropagation();
+                  setCategoryDropdownTask(task.TaskID);
+                }}
+              >
+                <Folder className="shared-important-icon" stroke="#222" width={16} height={16} />
+              </button>
               <button
                 className="shared-important"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   handleToggleImportant(task.TaskID, task.Important);
                 }}
@@ -178,7 +203,7 @@ export default function MeinTagPage() {
               </button>
               <button
                 className="shared-delete"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   handleDeleteTask(task.TaskID);
                 }}
@@ -186,6 +211,30 @@ export default function MeinTagPage() {
                 <Trash2 className="shared-delete-icon" width={16} height={16} />
               </button>
             </div>
+            {/* Kategorie-Dropdown für diesen Task */}
+            {categoryDropdownTask === task.TaskID && (
+              <select
+                className="modal-input"
+                style={{ position: "absolute", right: 40, top: 30, zIndex: 10, minWidth: 120 }}
+                value={task.CategoryID ?? ""}
+                onChange={async e => {
+                  setCategoryDropdownTask(undefined);
+                  const newCategoryId = e.target.value ? Number(e.target.value) : null;
+                  await fetch("/api/task", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ taskId: task.TaskID, categoryId: newCategoryId }),
+                  });
+                  setTasks(prev => prev ? prev.map(t => t.TaskID === task.TaskID ? { ...t, CategoryID: newCategoryId ?? undefined } : t) : prev);
+                }}
+                onBlur={() => setCategoryDropdownTask(undefined)}
+              >
+                <option value="">Keine Kategorie</option>
+                {categories && categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            )}
           </li>
         ))}
       </ul>
