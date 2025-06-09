@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
     // Für jeden Nutzer: Aufgaben abfragen und ggf. E-Mail senden
     for (const user of usersWithTasks) {
-      if (user.Email === "levin-lee.kipping@web.de") continue; // Diese Adresse überspringen
+      // if (user.Email === "levin-lee.kipping@web.de") continue; // Diese Adresse überspringen
       // Hole alle wichtigen, offenen Aufgaben, die in 24h fällig sind
       const tasks = await sql`
         SELECT "Name", "Date" FROM "WebApp"."Task"

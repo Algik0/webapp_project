@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "notify:cron": "node scripts/dailyNotify.js"
+    "notify:cron": "node scripts/dailyNotify.js",
+    "notify-important": "curl -X POST http://localhost:3000/api/notify-important",
+    "notify-important:prod": "curl -X POST https://taskademia.vercel.app/api/notify-important"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
