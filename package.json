@@ -8,12 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "notify:cron": "node scripts/dailyNotify.js",
-<<<<<<< HEAD
     "notify-important": "curl -X POST http://localhost:3000/api/notify-important",
     "notify-important:prod": "curl -X POST https://taskademia.vercel.app/api/notify-important"
-=======
-    "test": "jest"
->>>>>>> 645c9c4793fd84b02b27ebf39f9b4497dc10a078
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
