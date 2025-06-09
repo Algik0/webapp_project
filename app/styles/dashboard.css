@@ -209,7 +209,14 @@ html {
   overflow: auto;
   position: relative;
 }
-
+.calendar-month .calendar-day {
+  height: 100px;      /* Passe die Höhe nach Wunsch an */
+  min-height: 110px;
+  max-height: 110px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
 .calendar-day-inner {
   display: flex;
   flex-direction: column;
