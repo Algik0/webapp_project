@@ -8,8 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "notify:cron": "node scripts/dailyNotify.js",
+<<<<<<< HEAD
     "notify-important": "curl -X POST http://localhost:3000/api/notify-important",
     "notify-important:prod": "curl -X POST https://taskademia.vercel.app/api/notify-important"
+=======
+    "test": "jest"
+>>>>>>> 645c9c4793fd84b02b27ebf39f9b4497dc10a078
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
@@ -25,11 +29,15 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.17.50",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.0.0-beta.3",
     "tailwindcss": "^4",
+    "ts-jest": "^29.3.4",
     "typescript": "^5.8.3"
   }
 }
