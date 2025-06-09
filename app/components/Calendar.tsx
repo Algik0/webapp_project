@@ -9,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useCachedFetch } from "./useCachedFetch";
+import "../styles/calendar.css";
 
 // Hilfsfunktion: Erster Tag der Woche (Montag)
 function getMonday(d: Date) {

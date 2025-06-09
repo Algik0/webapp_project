@@ -1,0 +1,25 @@
+.calendar-day {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  height: 130px;
+  min-height: 130px;
+  max-height: 130px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  transition: width 0.2s, height 0.2s;
+}
+
+@media (max-width: 600px) {
+  .calendar-day {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    height: 110px;
+    min-height: 110px;
+    max-height: 110px;
+  }
+}
